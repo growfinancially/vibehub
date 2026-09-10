@@ -16,13 +16,20 @@
   --text:#f5f5f7;
   --muted:#969ca7;
   --accent:#7c5cff;
-  --border:#292e36
+  --border:#292e36;
+  --danger:#ff5c5c;
+  --success:#4ade80
 }
 
 body{
   font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);
-  color:var(--text)
+  color:var(--text);
+  min-height:100vh
+}
+
+button,input,textarea,select{
+  font:inherit
 }
 
 header{
@@ -74,6 +81,10 @@ header{
   font-weight:750;
   white-space:nowrap;
   cursor:pointer
+}
+
+.btn:hover{
+  filter:brightness(1.12)
 }
 
 .primary{
@@ -147,7 +158,15 @@ main{
   background:#20252c;
   display:grid;
   place-items:center;
-  position:relative
+  position:relative;
+  overflow:hidden
+}
+
+.media img,
+.media video{
+  width:100%;
+  height:100%;
+  object-fit:cover
 }
 
 .placeholder{
@@ -182,7 +201,15 @@ main{
   display:grid;
   place-items:center;
   background:linear-gradient(135deg,#7c5cff,#21d4fd);
-  font-weight:900
+  font-weight:900;
+  overflow:hidden;
+  flex-shrink:0
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover
 }
 
 .small,.desc{
@@ -219,6 +246,10 @@ main{
   cursor:pointer
 }
 
+.actions button:hover{
+  background:#252a32
+}
+
 .premium{
   margin-top:13px;
   padding:13px;
@@ -244,18 +275,22 @@ main{
   gap:20px
 }
 
-/* ÁREA DO UTILIZADOR */
+/* UTILIZADOR */
 
 .user-area{
   display:flex;
   align-items:center;
-  gap:10px
+  gap:8px
 }
 
-.user-name{
+.user-profile-btn{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 13px;
+  background:var(--card2);
   color:white;
-  font-weight:700;
-  white-space:nowrap
+  font-weight:750;
+  cursor:pointer
 }
 
 .logout-btn{
@@ -287,6 +322,8 @@ main{
 
 .modalbox{
   width:min(450px,100%);
+  max-height:90vh;
+  overflow:auto;
   background:var(--card);
   border:1px solid var(--border);
   border-radius:17px;
@@ -302,6 +339,10 @@ main{
   cursor:pointer
 }
 
+.modalbox h2{
+  margin-bottom:12px
+}
+
 .modalbox input,
 .modalbox textarea,
 .modalbox select{
@@ -311,16 +352,78 @@ main{
   border-radius:9px;
   border:1px solid var(--border);
   background:#0e1115;
-  color:white
+  color:white;
+  outline:none
 }
 
 .modalbox textarea{
-  min-height:85px
+  min-height:85px;
+  resize:vertical
 }
 
 .modalbox .full{
   width:100%;
   margin-top:8px
+}
+
+.message{
+  margin-top:10px;
+  line-height:1.4
+}
+
+.profile-card{
+  text-align:center;
+  padding:10px 0
+}
+
+.profile-avatar{
+  width:85px;
+  height:85px;
+  border-radius:50%;
+  margin:5px auto 12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#7c5cff,#21d4fd);
+  font-size:32px;
+  font-weight:900;
+  overflow:hidden
+}
+
+.profile-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
+.profile-card h2{
+  margin-bottom:4px
+}
+
+.profile-card p{
+  color:var(--muted);
+  font-size:14px
+}
+
+.profile-buttons{
+  display:grid;
+  gap:8px;
+  margin-top:18px
+}
+
+.empty{
+  grid-column:1/-1;
+  padding:30px;
+  text-align:center;
+  border:1px dashed var(--border);
+  border-radius:14px;
+  color:var(--muted)
+}
+
+.loading{
+  grid-column:1/-1;
+  text-align:center;
+  padding:30px;
+  color:var(--muted)
 }
 
 footer{
@@ -361,7 +464,9 @@ footer{
     padding:0 14px
   }
 
-  .nav .btn{
+  .nav .btn,
+  .user-profile-btn,
+  .logout-btn{
     padding:8px 10px;
     font-size:14px
   }
@@ -375,14 +480,9 @@ footer{
     align-items:flex-start
   }
 
-  .user-name{
-    display:none
-  }
-
 }
 </style>
 </head>
-
 
 <body class="notranslate">
 
@@ -399,8 +499,6 @@ footer{
     class="search"
     placeholder="Pesquisar criadores..."
   >
-
-  <!-- BOTÕES ANTES DO LOGIN -->
 
   <div id="authButtons">
 
@@ -420,19 +518,19 @@ footer{
 
   </div>
 
-
-  <!-- ÁREA DE UTILIZADOR -->
-
   <div
     id="userArea"
     class="user-area"
     style="display:none"
   >
 
-    <span
-      id="userName"
-      class="user-name"
-    ></span>
+    <button
+      id="userProfileBtn"
+      class="user-profile-btn"
+      onclick="openModal('profile')"
+    >
+      👤 Perfil
+    </button>
 
     <button
       class="logout-btn"
@@ -521,7 +619,7 @@ footer{
 
   <button
     class="btn primary"
-    onclick="openModal('creator')"
+    onclick="abrirCriador()"
   >
     Começar
   </button>
@@ -564,7 +662,6 @@ VibeHub © 2026 · Plataforma de criadores
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
 <script>
 
 /* =================================
@@ -578,296 +675,67 @@ const SUPABASE_KEY =
   "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS";
 
 
-let supabaseClient;
+let supabaseClient = null;
 
 try {
-  supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+
+  supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
   console.log("Supabase conectado!");
 
-} catch (error) {
-  console.error("Erro ao conectar ao Supabase:", error);
+} catch(error){
+
+  console.error(
+    "Erro ao conectar ao Supabase:",
+    error
+  );
+
 }
 
 
 /* =================================
-   PUBLICAÇÕES
+   ESTADO
 ================================= */
-
-const posts = [
-
-  [
-    "Mia Studio",
-    "M",
-    "Novo ensaio criativo",
-    "Fotografia e lifestyle em ambiente urbano.",
-    "free",
-    "📸"
-  ],
-
-  [
-    "Leo Visuals",
-    "L",
-    "Behind the scenes",
-    "Bastidores exclusivos do meu novo projeto.",
-    "premium",
-    "🎬"
-  ],
-
-  [
-    "Ana Creates",
-    "A",
-    "Diário de viagem",
-    "Momentos e vídeos da minha última viagem.",
-    "free",
-    "🌍"
-  ],
-
-  [
-    "Kai Motion",
-    "K",
-    "Vídeo exclusivo",
-    "Novo conteúdo para a comunidade Premium.",
-    "premium",
-    "🎥"
-  ],
-
-  [
-    "Studio 24",
-    "S",
-    "Sessão de fotos",
-    "Uma nova coleção de fotografias.",
-    "free",
-    "✨"
-  ],
-
-  [
-    "Noah Films",
-    "N",
-    "Projeto secreto",
-    "Acesso antecipado para subscritores.",
-    "premium",
-    "🔒"
-  ]
-
-];
-
 
 let current = "all";
+let currentUser = null;
+let posts = [];
 
 
 /* =================================
-   RENDERIZAR FEED
+   UTILITÁRIOS
 ================================= */
 
-function render(){
+function escapeHTML(value){
 
-  const search =
-    document.getElementById("search");
-
-  const feed =
-    document.getElementById("feed");
-
-  if(!search || !feed) return;
-
-
-  const q =
-    search.value.toLowerCase();
-
-
-  const arr =
-    posts.filter(function(p){
-
-      return(
-        (current === "all" || p[4] === current) &&
-        p[0].toLowerCase().includes(q)
-      );
-
-    });
-
-
-  if(!arr.length){
-
-    feed.innerHTML =
-      "<p class='desc'>Nenhuma publicação encontrada.</p>";
-
-    return;
-
+  if(value === null || value === undefined){
+    return "";
   }
 
-
-  feed.innerHTML =
-    arr.map(function(p){
-
-      const premium =
-        p[4] === "premium";
-
-
-      return `
-
-        <article class="card">
-
-          <div class="media">
-
-            <div class="placeholder">
-              ${p[5]}
-            </div>
-
-            ${
-              premium
-              ? '<span class="badge">🔒 PREMIUM</span>'
-              : ''
-            }
-
-          </div>
-
-
-          <div class="body">
-
-            <div class="creator">
-
-              <div class="avatar">
-                ${p[1]}
-              </div>
-
-              <div>
-
-                <b>
-                  ${p[0]}
-                </b>
-
-                <br>
-
-                <span class="small">
-                  @${p[0].toLowerCase().replaceAll(" ","")}
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <div class="title">
-              ${p[2]}
-            </div>
-
-
-            <div class="desc">
-              ${p[3]}
-            </div>
-
-
-            ${
-              premium
-              ? `
-                <div class="premium">
-
-                  <strong>
-                    Conteúdo exclusivo
-                  </strong>
-
-                  <span class="desc">
-                    Subscreve para desbloquear.
-                  </span>
-
-                </div>
-              `
-              : ''
-            }
-
-
-            <div class="actions">
-
-              <button
-                onclick="toggleLike(this)"
-              >
-                ♡ Gostar
-              </button>
-
-              <button
-                onclick="openModal('signup')"
-              >
-                ${
-                  premium
-                  ? "💎 Subscrever"
-                  : "💬 Comentar"
-                }
-              </button>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("");
-
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
 
-/* =================================
-   GOSTAR
-================================= */
+function getInitial(name){
 
-function toggleLike(button){
-
-  if(
-    button.textContent.includes("Gostei")
-  ){
-
-    button.textContent =
-      "♡ Gostar";
-
-  }else{
-
-    button.textContent =
-      "♥ Gostei";
-
+  if(!name){
+    return "?";
   }
 
+  return name
+    .trim()
+    .charAt(0)
+    .toUpperCase();
 }
-
-
-/* =================================
-   FILTROS
-================================= */
-
-function filterPosts(type,el){
-
-  current = type;
-
-
-  document
-    .querySelectorAll(".tab")
-    .forEach(function(tab){
-
-      tab.classList.remove("active");
-
-    });
-
-
-  el.classList.add("active");
-
-  render();
-
-}
-
-
-/* =================================
-   PESQUISA
-================================= */
-
-document
-  .getElementById("search")
-  .addEventListener(
-    "input",
-    render
-  );
 
 
 /* =================================
@@ -875,6 +743,9 @@ document
 ================================= */
 
 function openModal(type){
+
+  const modal =
+    document.getElementById("modal");
 
   const content =
     document.getElementById("modalContent");
@@ -909,8 +780,7 @@ function openModal(type){
 
       <p
         id="loginMsg"
-        class="small"
-        style="margin-top:10px"
+        class="small message"
       ></p>
 
     `;
@@ -918,7 +788,7 @@ function openModal(type){
   }
 
 
-  /* CRIAR CONTA */
+  /* SIGNUP */
 
   if(type === "signup"){
 
@@ -929,6 +799,11 @@ function openModal(type){
       <input
         id="signupName"
         placeholder="Nome"
+      >
+
+      <input
+        id="signupUsername"
+        placeholder="Username"
       >
 
       <input
@@ -952,8 +827,7 @@ function openModal(type){
 
       <p
         id="signupMsg"
-        class="small"
-        style="margin-top:10px"
+        class="small message"
       ></p>
 
     `;
@@ -961,9 +835,34 @@ function openModal(type){
   }
 
 
-  /* CRIAR PUBLICAÇÃO */
+  /* CRIADOR */
 
   if(type === "creator"){
+
+    if(!currentUser){
+
+      content.innerHTML = `
+
+        <h2>Torna-te criador</h2>
+
+        <p class="desc">
+          Precisas de iniciar sessão para criar uma publicação.
+        </p>
+
+        <button
+          class="btn primary full"
+          onclick="openModal('login')"
+        >
+          Entrar
+        </button>
+
+      `;
+
+      modal.classList.add("show");
+      return;
+
+    }
+
 
     content.innerHTML = `
 
@@ -972,20 +871,22 @@ function openModal(type){
       <input
         id="postTitle"
         placeholder="Título"
+        maxlength="100"
       >
 
       <textarea
         id="postDescription"
         placeholder="Descrição"
+        maxlength="500"
       ></textarea>
 
       <select id="postType">
 
-        <option>
+        <option value="free">
           Publicação gratuita
         </option>
 
-        <option>
+        <option value="premium">
           Conteúdo Premium
         </option>
 
@@ -997,6 +898,10 @@ function openModal(type){
         accept="image/*,video/*"
       >
 
+      <p class="small">
+        Máximo recomendado: 50 MB.
+      </p>
+
       <button
         class="btn primary full"
         onclick="createPost()"
@@ -1004,14 +909,118 @@ function openModal(type){
         Publicar
       </button>
 
+      <p
+        id="postMsg"
+        class="small message"
+      ></p>
+
     `;
 
   }
 
 
+  /* PERFIL */
+
+  if(type === "profile"){
+
+    if(!currentUser){
+      return;
+    }
+
+    const profile =
+      currentUser.profile || {};
+
+    const name =
+      profile.display_name ||
+      currentUser.user_metadata?.name ||
+      currentUser.email?.split("@")[0] ||
+      "Utilizador";
+
+    const avatar =
+      profile.avatar_url || "";
+
+    content.innerHTML = `
+
+      <div class="profile-card">
+
+        <div class="profile-avatar">
+
+          ${
+            avatar
+            ? `<img src="${escapeHTML(avatar)}" alt="Avatar">`
+            : getInitial(name)
+          }
+
+        </div>
+
+        <h2>
+          ${escapeHTML(name)}
+        </h2>
+
+        ${
+          profile.username
+          ? `<p>@${escapeHTML(profile.username)}</p>`
+          : ""
+        }
+
+        <p style="margin-top:8px">
+          ${escapeHTML(currentUser.email || "")}
+        </p>
+
+        ${
+          profile.bio
+          ? `<p style="margin-top:10px">${escapeHTML(profile.bio)}</p>`
+          : ""
+        }
+
+        <div class="profile-buttons">
+
+          ${
+            profile.is_creator
+            ? `
+              <button
+                class="btn primary"
+                onclick="openModal('creator')"
+              >
+                ➕ Criar publicação
+              </button>
+            `
+            : `
+              <button
+                class="btn primary"
+                onclick="becomeCreator()"
+              >
+                ⭐ Tornar-me criador
+              </button>
+            `
+          }
+
+          <button
+            class="btn"
+            onclick="showMyPosts()"
+          >
+            📁 Minhas publicações
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  modal.classList.add("show");
+
+}
+
+
+function closeModal(){
+
   document
     .getElementById("modal")
-    .classList.add("show");
+    .classList.remove("show");
 
 }
 
@@ -1027,6 +1036,14 @@ async function signup(){
       .getElementById("signupName")
       .value
       .trim();
+
+  const username =
+    document
+      .getElementById("signupUsername")
+      .value
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g,"");
 
   const email =
     document
@@ -1088,7 +1105,8 @@ async function signup(){
 
         options:{
           data:{
-            name:name
+            name:name,
+            username:username
           }
         }
 
@@ -1105,8 +1123,28 @@ async function signup(){
     }
 
 
+    const user =
+      result.data.user;
+
+
+    /*
+      Se o email confirmation estiver
+      desligado, a sessão já existe.
+    */
+
+    if(user){
+
+      currentUser = user;
+
+      await carregarPerfil(user);
+
+      mostrarUtilizador(user);
+
+    }
+
+
     msg.textContent =
-      "Conta criada! Verifica o teu email.";
+      "Conta criada com sucesso!";
 
   }catch(error){
 
@@ -1187,12 +1225,17 @@ async function login(){
     }
 
 
-    mostrarUtilizador(
-      result.data.user
-    );
+    currentUser =
+      result.data.user;
 
+
+    await carregarPerfil(currentUser);
+
+    mostrarUtilizador(currentUser);
 
     closeModal();
+
+    await carregarPosts();
 
 
   }catch(error){
@@ -1208,12 +1251,116 @@ async function login(){
 
 
 /* =================================
+   PERFIL DO UTILIZADOR
+================================= */
+
+async function carregarPerfil(user){
+
+  if(!supabaseClient || !user){
+    return null;
+  }
+
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id",user.id)
+        .maybeSingle();
+
+
+    if(result.error){
+
+      console.error(
+        "Erro ao carregar perfil:",
+        result.error
+      );
+
+      return null;
+
+    }
+
+
+    /*
+      Se ainda não existir perfil,
+      tentamos criá-lo.
+    */
+
+    if(!result.data){
+
+      const name =
+        user.user_metadata?.name ||
+        user.email?.split("@")[0] ||
+        "Utilizador";
+
+      const username =
+        user.user_metadata?.username ||
+        user.email?.split("@")[0] ||
+        "utilizador";
+
+
+      const insert =
+        await supabaseClient
+          .from("profiles")
+          .insert({
+
+            id:user.id,
+            username:username,
+            display_name:name,
+            is_creator:false
+
+          })
+          .select()
+          .single();
+
+
+      if(insert.error){
+
+        console.error(
+          "Erro ao criar perfil:",
+          insert.error
+        );
+
+        return null;
+
+      }
+
+
+      currentUser.profile =
+        insert.data;
+
+      return insert.data;
+
+    }
+
+
+    currentUser.profile =
+      result.data;
+
+    return result.data;
+
+  }catch(error){
+
+    console.error(error);
+
+    return null;
+
+  }
+
+}
+
+
+/* =================================
    MOSTRAR UTILIZADOR
 ================================= */
 
 function mostrarUtilizador(user){
 
-  if(!user) return;
+  if(!user){
+    return;
+  }
 
 
   const authButtons =
@@ -1221,19 +1368,6 @@ function mostrarUtilizador(user){
 
   const userArea =
     document.getElementById("userArea");
-
-  const userName =
-    document.getElementById("userName");
-
-
-  const nome =
-    user.user_metadata?.name ||
-    user.email.split("@")[0];
-
-
-  userName.textContent =
-    "Olá, " + nome;
-
 
   authButtons.style.display =
     "none";
@@ -1250,7 +1384,9 @@ function mostrarUtilizador(user){
 
 async function verificarSessao(){
 
-  if(!supabaseClient) return;
+  if(!supabaseClient){
+    return;
+  }
 
 
   try{
@@ -1261,11 +1397,15 @@ async function verificarSessao(){
 
     if(result.data.session){
 
-      mostrarUtilizador(
-        result.data.session.user
-      );
+      currentUser =
+        result.data.session.user;
+
+      await carregarPerfil(currentUser);
+
+      mostrarUtilizador(currentUser);
 
     }
+
 
   }catch(error){
 
@@ -1280,23 +1420,27 @@ async function verificarSessao(){
 
 
 /* =================================
-   SAIR
+   LOGOUT
 ================================= */
 
 async function logout(){
 
-  if(!supabaseClient) return;
+  if(supabaseClient){
 
+    try{
 
-  try{
+      await supabaseClient.auth.signOut();
 
-    await supabaseClient.auth.signOut();
+    }catch(error){
 
-  }catch(error){
+      console.error(error);
 
-    console.error(error);
+    }
 
   }
+
+
+  currentUser = null;
 
 
   document.getElementById(
@@ -1304,72 +1448,4 @@ async function logout(){
   ).style.display = "flex";
 
 
-  document.getElementById(
-    "userArea"
-  ).style.display = "none";
-
-}
-
-
-/* =================================
-   CRIAR PUBLICAÇÃO
-================================= */
-
-function createPost(){
-
-  const title =
-    document
-      .getElementById("postTitle")
-      .value
-      .trim();
-
-  const description =
-    document
-      .getElementById("postDescription")
-      .value
-      .trim();
-
-
-  if(!title || !description){
-
-    alert(
-      "Preenche o título e a descrição."
-    );
-
-    return;
-
-  }
-
-
-  alert(
-    "Publicação preparada! A ligação ao Storage e à base de dados será adicionada no próximo passo."
-  );
-
-}
-
-
-/* =================================
-   FECHAR MODAL
-================================= */
-
-function closeModal(){
-
-  document
-    .getElementById("modal")
-    .classList.remove("show");
-
-}
-
-
-/* =================================
-   INICIAR
-================================= */
-
-verificarSessao();
-
-render();
-
-</script>
-
-</body>
-  </html>
+  docum

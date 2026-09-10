@@ -244,6 +244,32 @@ main{
   gap:20px
 }
 
+/* ÁREA DO UTILIZADOR */
+
+.user-area{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.user-name{
+  color:white;
+  font-weight:700;
+  white-space:nowrap
+}
+
+.logout-btn{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 13px;
+  background:var(--card2);
+  color:white;
+  font-weight:750;
+  cursor:pointer
+}
+
+/* MODAL */
+
 .modal{
   display:none;
   position:fixed;
@@ -306,6 +332,7 @@ footer{
 }
 
 @media(max-width:800px){
+
   .grid{
     grid-template-columns:repeat(2,1fr)
   }
@@ -317,9 +344,11 @@ footer{
   .hero h1{
     font-size:36px
   }
+
 }
 
 @media(max-width:560px){
+
   .grid{
     grid-template-columns:1fr
   }
@@ -345,13 +374,20 @@ footer{
     flex-direction:column;
     align-items:flex-start
   }
+
+  .user-name{
+    display:none
+  }
+
 }
 </style>
 </head>
 
+
 <body class="notranslate">
 
 <header>
+
 <nav class="nav">
 
   <div class="logo">
@@ -364,21 +400,51 @@ footer{
     placeholder="Pesquisar criadores..."
   >
 
-  <button
-    class="btn"
-    onclick="openModal('login')"
-  >
-    Entrar
-  </button>
+  <!-- BOTÕES ANTES DO LOGIN -->
 
-  <button
-    class="btn primary"
-    onclick="openModal('signup')"
+  <div id="authButtons">
+
+    <button
+      class="btn"
+      onclick="openModal('login')"
+    >
+      Entrar
+    </button>
+
+    <button
+      class="btn primary"
+      onclick="openModal('signup')"
+    >
+      Criar conta
+    </button>
+
+  </div>
+
+
+  <!-- ÁREA DE UTILIZADOR -->
+
+  <div
+    id="userArea"
+    class="user-area"
+    style="display:none"
   >
-    Criar conta
-  </button>
+
+    <span
+      id="userName"
+      class="user-name"
+    ></span>
+
+    <button
+      class="logout-btn"
+      onclick="logout()"
+    >
+      Sair
+    </button>
+
+  </div>
 
 </nav>
+
 </header>
 
 
@@ -470,6 +536,8 @@ VibeHub © 2026 · Plataforma de criadores
 </footer>
 
 
+<!-- MODAL -->
+
 <div
   id="modal"
   class="modal"
@@ -499,9 +567,9 @@ VibeHub © 2026 · Plataforma de criadores
 
 <script>
 
-/* ================================
-   SUPABASE
-================================ */
+/* =================================
+   CONFIGURAÇÃO SUPABASE
+================================= */
 
 const SUPABASE_URL =
   "https://kcgiwqgjyjklguybmtgp.supabase.co";
@@ -509,14 +577,16 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS";
 
+
 let supabaseClient = null;
+
 
 try {
 
-  if (
+  if(
     window.supabase &&
-    SUPABASE_KEY !== "*******"
-  ) {
+    SUPABASE_KEY !== "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS"
+  ){
 
     supabaseClient =
       window.supabase.createClient(
@@ -526,7 +596,7 @@ try {
 
   }
 
-} catch(error) {
+}catch(error){
 
   console.error(
     "Erro ao iniciar Supabase:",
@@ -536,9 +606,9 @@ try {
 }
 
 
-/* ================================
+/* =================================
    PUBLICAÇÕES
-================================ */
+================================= */
 
 const posts = [
 
@@ -598,12 +668,13 @@ const posts = [
 
 ];
 
+
 let current = "all";
 
 
-/* ================================
-   RENDERIZAR PUBLICAÇÕES
-================================ */
+/* =================================
+   RENDERIZAR FEED
+================================= */
 
 function render(){
 
@@ -615,13 +686,15 @@ function render(){
 
   if(!search || !feed) return;
 
+
   const q =
     search.value.toLowerCase();
+
 
   const arr =
     posts.filter(function(p){
 
-      return (
+      return(
         (current === "all" || p[4] === current) &&
         p[0].toLowerCase().includes(q)
       );
@@ -750,9 +823,9 @@ function render(){
 }
 
 
-/* ================================
+/* =================================
    GOSTAR
-================================ */
+================================= */
 
 function toggleLike(button){
 
@@ -760,24 +833,27 @@ function toggleLike(button){
     button.textContent.includes("Gostei")
   ){
 
-    button.textContent = "♡ Gostar";
+    button.textContent =
+      "♡ Gostar";
 
   }else{
 
-    button.textContent = "♥ Gostei";
+    button.textContent =
+      "♥ Gostei";
 
   }
 
 }
 
 
-/* ================================
+/* =================================
    FILTROS
-================================ */
+================================= */
 
 function filterPosts(type,el){
 
   current = type;
+
 
   document
     .querySelectorAll(".tab")
@@ -795,9 +871,9 @@ function filterPosts(type,el){
 }
 
 
-/* ================================
+/* =================================
    PESQUISA
-================================ */
+================================= */
 
 document
   .getElementById("search")
@@ -807,9 +883,9 @@ document
   );
 
 
-/* ================================
+/* =================================
    MODAIS
-================================ */
+================================= */
 
 function openModal(type){
 
@@ -898,7 +974,7 @@ function openModal(type){
   }
 
 
-  /* CRIADOR */
+  /* CRIAR PUBLICAÇÃO */
 
   if(type === "creator"){
 
@@ -953,9 +1029,9 @@ function openModal(type){
 }
 
 
-/* ================================
+/* =================================
    CRIAR CONTA
-================================ */
+================================= */
 
 async function signup(){
 
@@ -1019,16 +1095,14 @@ async function signup(){
     const result =
       await supabaseClient.auth.signUp({
 
-        email: email,
+        email:email,
 
-        password: password,
+        password:password,
 
-        options: {
-
-          data: {
-            name: name
+        options:{
+          data:{
+            name:name
           }
-
         }
 
       });
@@ -1059,9 +1133,9 @@ async function signup(){
 }
 
 
-/* ================================
+/* =================================
    LOGIN
-================================ */
+================================= */
 
 async function login(){
 
@@ -1109,9 +1183,9 @@ async function login(){
     const result =
       await supabaseClient.auth.signInWithPassword({
 
-        email: email,
+        email:email,
 
-        password: password
+        password:password
 
       });
 
@@ -1126,8 +1200,13 @@ async function login(){
     }
 
 
-    msg.textContent =
-      "Login efetuado!";
+    mostrarUtilizador(
+      result.data.user
+    );
+
+
+    closeModal();
+
 
   }catch(error){
 
@@ -1141,17 +1220,127 @@ async function login(){
 }
 
 
-/* ================================
-   PUBLICAR
-================================ */
+/* =================================
+   MOSTRAR UTILIZADOR
+================================= */
+
+function mostrarUtilizador(user){
+
+  if(!user) return;
+
+
+  const authButtons =
+    document.getElementById("authButtons");
+
+  const userArea =
+    document.getElementById("userArea");
+
+  const userName =
+    document.getElementById("userName");
+
+
+  const nome =
+    user.user_metadata?.name ||
+    user.email.split("@")[0];
+
+
+  userName.textContent =
+    "Olá, " + nome;
+
+
+  authButtons.style.display =
+    "none";
+
+  userArea.style.display =
+    "flex";
+
+}
+
+
+/* =================================
+   VERIFICAR SESSÃO
+================================= */
+
+async function verificarSessao(){
+
+  if(!supabaseClient) return;
+
+
+  try{
+
+    const result =
+      await supabaseClient.auth.getSession();
+
+
+    if(result.data.session){
+
+      mostrarUtilizador(
+        result.data.session.user
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "Erro ao verificar sessão:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =================================
+   SAIR
+================================= */
+
+async function logout(){
+
+  if(!supabaseClient) return;
+
+
+  try{
+
+    await supabaseClient.auth.signOut();
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+
+  document.getElementById(
+    "authButtons"
+  ).style.display = "flex";
+
+
+  document.getElementById(
+    "userArea"
+  ).style.display = "none";
+
+}
+
+
+/* =================================
+   CRIAR PUBLICAÇÃO
+================================= */
 
 function createPost(){
 
   const title =
-    document.getElementById("postTitle").value.trim();
+    document
+      .getElementById("postTitle")
+      .value
+      .trim();
 
   const description =
-    document.getElementById("postDescription").value.trim();
+    document
+      .getElementById("postDescription")
+      .value
+      .trim();
 
 
   if(!title || !description){
@@ -1172,9 +1361,9 @@ function createPost(){
 }
 
 
-/* ================================
+/* =================================
    FECHAR MODAL
-================================ */
+================================= */
 
 function closeModal(){
 
@@ -1185,13 +1374,15 @@ function closeModal(){
 }
 
 
-/* ================================
-   INICIAR SITE
-================================ */
+/* =================================
+   INICIAR
+================================= */
+
+verificarSessao();
 
 render();
 
 </script>
 
 </body>
-</html>
+  </html>

@@ -1650,7 +1650,7 @@ async function createPost(){
     const upload =
       await supabaseClient
         .storage
-        .from("Midia")
+        .from("media")
         .upload(
           filePath,
           file,
@@ -1689,7 +1689,7 @@ async function createPost(){
     const publicResult =
       supabaseClient
         .storage
-        .from("Midia")
+        .from("media")
         .getPublicUrl(filePath);
 
 
@@ -1742,7 +1742,7 @@ async function createPost(){
 
       await supabaseClient
         .storage
-        .from("Midia")
+        .from("media")
         .remove([filePath]);
 
 

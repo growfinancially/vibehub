@@ -123,10 +123,43 @@ document.getElementById("search").addEventListener("input",render);
 function openModal(k){
 let c=document.getElementById("modalContent");
 if(k==="login")c.innerHTML='<h2>Entrar</h2><input placeholder="Email"><input type="password" placeholder="Palavra-passe"><button class="btn primary full" onclick="closeModal()">Entrar</button>';
-if(k==="signup")c.innerHTML='<h2>Criar conta</h2><input placeholder="Nome"><input placeholder="Email"><input type="password" placeholder="Palavra-passe"><button class="btn primary full" onclick="closeModal()">Criar conta</button>';
+if(k==="signup")c.innerHTML=`
+<h2>Criar conta</h2>
+<input id="signupName" placeholder="Nome">
+<input id="signupEmail" type="email" placeholder="Email">
+<input id="signupPassword" type="password" placeholder="Palavra-passe">
+<button class="btn primary full" onclick="signup()">Criar conta</button>
+<p id="signupMsg" class="small" style="margin-top:10px"></p>`;
 if(k==="creator")c.innerHTML='<h2>Criar publicação</h2><input placeholder="Título"><textarea placeholder="Descrição"></textarea><select><option>Publicação gratuita</option><option>Conteúdo Premium</option></select><input type="file" accept="image/*,video/*"><button class="btn primary full" onclick="closeModal()">Publicar</button>';
 document.getElementById("modal").classList.add("show");
 }
+async function signup(){
+  const name=document.getElementById("signupName").value;
+  const email=document.getElementById("signupEmail").value;
+  const password=document.getElementById("signupPassword").value;
+  const msg=document.getElementById("signupMsg");
+
+  if(!name || !email || !password){
+    msg.textContent="Preenche todos os campos.";
+    return;
+  }
+
+  const {data,error}=await supabase.auth.signUp({
+    email:email,
+    password:password,
+    options:{
+      data:{name:name}
+    }
+  });
+
+  if(error){
+    msg.textContent=error.message;
+    return;
+  }
+
+  msg.textContent="Conta criada! Verifica o teu email.";
+}
+
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 render();
 </script>

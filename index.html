@@ -578,23 +578,19 @@ const SUPABASE_KEY =
   "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS";
 
 
-let supabaseClient = null;
-
+let supabaseClient;
 
 try {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-  if(
-    window.supabase &&
-    SUPABASE_KEY !== "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS"
-  ){
+  console.log("Supabase conectado!");
 
-    supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
-
-  }
+} catch (error) {
+  console.error("Erro ao conectar ao Supabase:", error);
+}
 
 }catch(error){
 

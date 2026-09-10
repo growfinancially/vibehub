@@ -672,7 +672,7 @@ const SUPABASE_URL =
   "https://kcgiwqgjyjklguybmtgp.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS";
+  "*****";
 
 
 let supabaseClient = null;
@@ -1448,4 +1448,959 @@ async function logout(){
   ).style.display = "flex";
 
 
-  docum
+  document.getElementById(
+    "userArea"
+  ).style.display = "none";
+
+}
+
+
+/* =================================
+   TORNAR-SE CRIADOR
+================================= */
+
+async function becomeCreator(){
+
+  if(!currentUser){
+    return;
+  }
+
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .update({
+          is_creator:true
+        })
+        .eq("id",currentUser.id)
+        .select()
+        .single();
+
+
+    if(result.error){
+
+      alert(
+        "Não foi possível ativar o modo criador: " +
+        result.error.message
+      );
+
+      return;
+
+    }
+
+
+    currentUser.profile =
+      result.data;
+
+
+    closeModal();
+
+    alert(
+      "Agora és criador! 🎉"
+    );
+
+
+    openModal("creator");
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Ocorreu um erro."
+    );
+
+  }
+
+}
+
+
+/* =================================
+   ABRIR ÁREA DE CRIADOR
+================================= */
+
+function abrirCriador(){
+
+  if(!currentUser){
+
+    openModal("login");
+
+    return;
+
+  }
+
+
+  openModal("creator");
+
+}
+
+
+/* =================================
+   CRIAR PUBLICAÇÃO
+================================= */
+
+async function createPost(){
+
+  if(!currentUser){
+
+    alert(
+      "Precisas de iniciar sessão."
+    );
+
+    return;
+
+  }
+
+
+  const title =
+    document
+      .getElementById("postTitle")
+      .value
+      .trim();
+
+  const description =
+    document
+      .getElementById("postDescription")
+      .value
+      .trim();
+
+  const type =
+    document
+      .getElementById("postType")
+      .value;
+
+  const fileInput =
+    document.getElementById("postFile");
+
+  const msg =
+    document.getElementById("postMsg");
+
+
+  if(!title){
+
+    msg.textContent =
+      "Escreve um título.";
+
+    return;
+
+  }
+
+
+  if(!fileInput.files.length){
+
+    msg.textContent =
+      "Escolhe uma imagem ou vídeo.";
+
+    return;
+
+  }
+
+
+  const file =
+    fileInput.files[0];
+
+
+  /*
+    Limite simples de 50 MB
+  */
+
+  if(file.size > 50 * 1024 * 1024){
+
+    msg.textContent =
+      "O ficheiro é demasiado grande. Máximo: 50 MB.";
+
+    return;
+
+  }
+
+
+  msg.textContent =
+    "A enviar ficheiro...";
+
+
+  try{
+
+    const extension =
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+
+    const safeExtension =
+      extension.replace(/[^a-z0-9]/g,"");
+
+
+    const filePath =
+      currentUser.id +
+      "/" +
+      Date.now() +
+      "_" +
+      crypto.randomUUID() +
+      "." +
+      safeExtension;
+
+
+    /*
+      UPLOAD PARA STORAGE
+    */
+
+    const upload =
+      await supabaseClient
+        .storage
+        .from("Midia")
+        .upload(
+          filePath,
+          file,
+          {
+            cacheControl:"3600",
+            upsert:false,
+            contentType:file.type
+          }
+        );
+
+
+    if(upload.error){
+
+      console.error(
+        "Erro no upload:",
+        upload.error
+      );
+
+      msg.textContent =
+        "Erro ao enviar o ficheiro: " +
+        upload.error.message;
+
+      return;
+
+    }
+
+
+    msg.textContent =
+      "Ficheiro enviado. A guardar publicação...";
+
+
+    /*
+      URL PÚBLICA
+    */
+
+    const publicResult =
+      supabaseClient
+        .storage
+        .from("Midia")
+        .getPublicUrl(filePath);
+
+
+    const mediaUrl =
+      publicResult.data.publicUrl;
+
+
+    /*
+      GUARDAR POST
+    */
+
+    const insert =
+      await supabaseClient
+        .from("posts")
+        .insert({
+
+          creator_id:currentUser.id,
+
+          title:title,
+
+          description:
+            description || null,
+
+          media_url:mediaUrl,
+
+          media_type:
+            file.type.startsWith("video/")
+            ? "video"
+            : "image",
+
+          access_type:type
+
+        })
+        .select()
+        .single();
+
+
+    if(insert.error){
+
+      console.error(
+        "Erro ao guardar publicação:",
+        insert.error
+      );
+
+      /*
+        Se o post falhar,
+        apagamos o ficheiro para
+        não deixar lixo no Storage.
+      */
+
+      await supabaseClient
+        .storage
+        .from("Midia")
+        .remove([filePath]);
+
+
+      msg.textContent =
+        "Erro ao guardar publicação: " +
+        insert.error.message;
+
+      return;
+
+    }
+
+
+    msg.textContent =
+      "Publicado com sucesso! 🎉";
+
+
+    /*
+      Atualizar feed
+    */
+
+    await carregarPosts();
+
+
+    setTimeout(function(){
+
+      closeModal();
+
+    },800);
+
+
+  }catch(error){
+
+    console.error(error);
+
+    msg.textContent =
+      "Ocorreu um erro ao publicar.";
+
+  }
+
+}
+
+
+/* =================================
+   CARREGAR POSTS DO SUPABASE
+================================= */
+
+async function carregarPosts(){
+
+  const feed =
+    document.getElementById("feed");
+
+
+  if(!supabaseClient){
+
+    renderFallback();
+
+    return;
+
+  }
+
+
+  feed.innerHTML =
+    `<div class="loading">A carregar publicações...</div>`;
+
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("posts")
+        .select(`
+          id,
+          creator_id,
+          title,
+          description,
+          media_url,
+          media_type,
+          access_type,
+          created_at,
+          profiles (
+            username,
+            display_name,
+            avatar_url,
+            is_creator
+          )
+        `)
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(result.error){
+
+      console.error(
+        "Erro ao carregar posts:",
+        result.error
+      );
+
+      renderFallback();
+
+      return;
+
+    }
+
+
+    posts =
+      result.data || [];
+
+
+    render();
+
+  }catch(error){
+
+    console.error(error);
+
+    renderFallback();
+
+  }
+
+}
+
+
+/* =================================
+   FALLBACK
+================================= */
+
+function renderFallback(){
+
+  posts = [
+
+    {
+      id:"demo1",
+      creator_id:"demo",
+      title:"Novo ensaio criativo",
+      description:"Fotografia e lifestyle em ambiente urbano.",
+      media_url:"",
+      media_type:"image",
+      access_type:"free",
+      profiles:{
+        display_name:"Mia Studio",
+        username:"miastudio",
+        avatar_url:""
+      }
+    },
+
+    {
+      id:"demo2",
+      creator_id:"demo",
+      title:"Behind the scenes",
+      description:"Bastidores exclusivos do meu novo projeto.",
+      media_url:"",
+      media_type:"video",
+      access_type:"premium",
+      profiles:{
+        display_name:"Leo Visuals",
+        username:"leovisuals",
+        avatar_url:""
+      }
+    }
+
+  ];
+
+  render();
+
+}
+
+
+/* =================================
+   RENDER FEED
+================================= */
+
+function render(){
+
+  const search =
+    document.getElementById("search");
+
+  const feed =
+    document.getElementById("feed");
+
+
+  if(!search || !feed){
+    return;
+  }
+
+
+  const q =
+    search.value
+      .toLowerCase()
+      .trim();
+
+
+  const arr =
+    posts.filter(function(post){
+
+      const profile =
+        post.profiles || {};
+
+      const creator =
+        profile.display_name ||
+        profile.username ||
+        "Criador";
+
+
+      const matchesType =
+        current === "all" ||
+        post.access_type === current;
+
+
+      const matchesSearch =
+        creator
+          .toLowerCase()
+          .includes(q) ||
+
+        (post.title || "")
+          .toLowerCase()
+          .includes(q);
+
+
+      return matchesType && matchesSearch;
+
+    });
+
+
+  if(!arr.length){
+
+    feed.innerHTML = `
+
+      <div class="empty">
+        Nenhuma publicação encontrada.
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  feed.innerHTML =
+    arr.map(function(post){
+
+      const profile =
+        post.profiles || {};
+
+
+      const creator =
+        profile.display_name ||
+        profile.username ||
+        "Criador";
+
+
+      const username =
+        profile.username ||
+        creator.toLowerCase().replace(/\s+/g,"");
+
+
+      const premium =
+        post.access_type === "premium";
+
+
+      let mediaHTML = "";
+
+
+      if(post.media_url){
+
+        if(post.media_type === "video"){
+
+          mediaHTML = `
+
+            <video
+              src="${escapeHTML(post.media_url)}"
+              controls
+              preload="metadata"
+            ></video>
+
+          `;
+
+        }else{
+
+          mediaHTML = `
+
+            <img
+              src="${escapeHTML(post.media_url)}"
+              alt="${escapeHTML(post.title)}"
+              loading="lazy"
+            >
+
+          `;
+
+        }
+
+      }else{
+
+        mediaHTML = `
+
+          <div class="placeholder">
+            ${post.media_type === "video" ? "🎬" : "📸"}
+          </div>
+
+        `;
+
+      }
+
+
+      const avatarHTML =
+        profile.avatar_url
+        ? `
+          <img
+            src="${escapeHTML(profile.avatar_url)}"
+            alt="Avatar"
+          >
+        `
+        : getInitial(creator);
+
+
+      return `
+
+        <article class="card">
+
+          <div class="media">
+
+            ${mediaHTML}
+
+            ${
+              premium
+              ? '<span class="badge">🔒 PREMIUM</span>'
+              : ''
+            }
+
+          </div>
+
+
+          <div class="body">
+
+            <div class="creator">
+
+              <div class="avatar">
+                ${avatarHTML}
+              </div>
+
+              <div>
+
+                <b>
+                  ${escapeHTML(creator)}
+                </b>
+
+                <br>
+
+                <span class="small">
+                  @${escapeHTML(username)}
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="title">
+              ${escapeHTML(post.title)}
+            </div>
+
+
+            ${
+              post.description
+              ? `
+                <div class="desc">
+                  ${escapeHTML(post.description)}
+                </div>
+              `
+              : ""
+            }
+
+
+            ${
+              premium
+              ? `
+                <div class="premium">
+
+                  <strong>
+                    Conteúdo exclusivo
+                  </strong>
+
+                  <span class="desc">
+                    Subscreve para desbloquear.
+                  </span>
+
+                </div>
+              `
+              : ""
+            }
+
+
+            <div class="actions">
+
+              <button
+                onclick="toggleLike(this)"
+              >
+                ♡ Gostar
+              </button>
+
+              <button
+                onclick="postAction('${post.access_type}')"
+              >
+                ${
+                  premium
+                  ? "💎 Subscrever"
+                  : "💬 Comentar"
+                }
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =================================
+   GOSTAR
+================================= */
+
+function toggleLike(button){
+
+  if(
+    button.textContent.includes("Gostei")
+  ){
+
+    button.textContent =
+      "♡ Gostar";
+
+  }else{
+
+    button.textContent =
+      "♥ Gostei";
+
+  }
+
+}
+
+
+/* =================================
+   AÇÃO DO POST
+================================= */
+
+function postAction(type){
+
+  if(type === "premium"){
+
+    if(!currentUser){
+
+      openModal("login");
+
+      return;
+
+    }
+
+
+    alert(
+      "A área de subscrição Premium será ligada ao sistema de pagamentos no próximo passo."
+    );
+
+    return;
+
+  }
+
+
+  if(!currentUser){
+
+    openModal("login");
+
+    return;
+
+  }
+
+
+  alert(
+    "O sistema de comentários será adicionado no próximo passo."
+  );
+
+}
+
+
+/* =================================
+   FILTROS
+================================= */
+
+function filterPosts(type,el){
+
+  current = type;
+
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(function(tab){
+
+      tab.classList.remove("active");
+
+    });
+
+
+  el.classList.add("active");
+
+  render();
+
+}
+
+
+/* =================================
+   PESQUISA
+================================= */
+
+document
+  .getElementById("search")
+  .addEventListener(
+    "input",
+    render
+  );
+
+
+/* =================================
+   MINHAS PUBLICAÇÕES
+================================= */
+
+async function showMyPosts(){
+
+  closeModal();
+
+
+  if(!currentUser){
+    return;
+  }
+
+
+  const feed =
+    document.getElementById("feed");
+
+
+  feed.innerHTML =
+    `<div class="loading">A carregar as tuas publicações...</div>`;
+
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("posts")
+        .select(`
+          id,
+          creator_id,
+          title,
+          description,
+          media_url,
+          media_type,
+          access_type,
+          created_at,
+          profiles (
+            username,
+            display_name,
+            avatar_url,
+            is_creator
+          )
+        `)
+        .eq(
+          "creator_id",
+          currentUser.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(result.error){
+
+      console.error(result.error);
+
+      feed.innerHTML =
+        `<div class="empty">Erro ao carregar as tuas publicações.</div>`;
+
+      return;
+
+    }
+
+
+    const oldPosts =
+      posts;
+
+    posts =
+      result.data || [];
+
+
+    current =
+      "all";
+
+
+    document
+      .querySelectorAll(".tab")
+      .forEach(function(tab){
+
+        tab.classList.remove("active");
+
+      });
+
+
+    render();
+
+
+    /*
+      Voltamos a mostrar todos os posts
+      quando o utilizador atualizar a página.
+    */
+
+    setTimeout(function(){
+
+      posts =
+        oldPosts;
+
+    },100);
+
+  }catch(error){
+
+    console.error(error);
+
+    feed.innerHTML =
+      `<div class="empty">Ocorreu um erro.</div>`;
+
+  }
+
+}
+
+
+/* =================================
+   INICIAR
+================================= */
+
+async function iniciar(){
+
+  await verificarSessao();
+
+  await carregarPosts();
+
+}
+
+
+iniciar();
+
+</script>
+
+</body>
+</html>

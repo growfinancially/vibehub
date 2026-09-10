@@ -95,8 +95,13 @@ footer{text-align:center;padding:25px;border-top:1px solid var(--border);color:v
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  const SUPABASE_URL = "https://kcgiwqgjyjklguybmtgp.supabase.co";
+const SUPABASE_URL = "https://kcgiwqgjyjklguybmtgp.supabase.co";
 const SUPABASE_KEY = "sb_publishable_qU22AqdzGgVVHHtyMbSU4g_CAh3-PWS";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
   
 const posts=[
 ["Mia Studio","M","Novo ensaio criativo","Fotografia e lifestyle em ambiente urbano.","free","📸"],

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeHub — Criadores & Conteúdo Premium</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0b0d10;--card:#14171c;--card2:#1a1e24;--text:#f4f6f8;--muted:#9299a4;--accent:#7c5cff;--border:#272c34}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button,input{font:inherit}button{cursor:pointer;border:0}
+.top{position:sticky;top:0;z-index:10;background:rgba(11,13,16,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{max-width:1150px;margin:auto;height:68px;display:flex;align-items:center;gap:18px;padding:0 18px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-1px;margin-right:auto}.logo span{color:var(--accent)}
+.search{background:var(--card);border:1px solid var(--border);color:white;border-radius:12px;padding:10px 14px;width:230px;outline:none}
+.nav button,.btn{padding:10px 15px;border-radius:11px;background:var(--card2);color:white;font-weight:700}
+.primary{background:var(--accent)!important}
+main{max-width:1150px;margin:auto;padding:28px 18px 70px}
+.hero{padding:35px 0 25px}.hero h1{font-size:42px;letter-spacing:-2px}.hero p{color:var(--muted);margin-top:8px;max-width:650px}
+.tabs{display:flex;gap:9px;margin:20px 0}.tab{padding:9px 15px;border-radius:20px;background:var(--card);color:var(--muted)}.tab.active{background:white;color:#111}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.media{height:250px;background:#20242b;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.media img,.media video{width:100%;height:100%;object-fit:cover}
+.placeholder{font-size:55px}
+.badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.75);padding:7px 10px;border-radius:9px;font-size:12px;font-weight:800}
+.body{padding:15px}.creator{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#21d4fd);display:grid;place-items:center;font-weight:900}
+.creator small,.desc{color:var(--muted)}.title{font-weight:800;margin:12px 0 7px}.desc{font-size:14px;line-height:1.4}
+.actions{display:flex;gap:8px;margin-top:14px}.actions button{flex:1;padding:9px;border-radius:9px;background:var(--card2);color:white}.actions .like.active{color:#ff5b7f}
+.section-title{margin:35px 0 15px;font-size:21px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:20;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}.modalbox{width:min(470px,100%);background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px}
+.modalbox h2{margin-bottom:15px}.modalbox input,.modalbox textarea,.modalbox select{width:100%;background:#0e1115;border:1px solid var(--border);color:white;border-radius:10px;padding:12px;margin:7px 0;outline:none}.modalbox textarea{min-height:90px;resize:vertical}
+.close{float:right;background:none;color:var(--muted);font-size:22px}.premium{margin-top:15px;padding:16px;border-radius:12px;background:#201a3b;border:1px solid #45378a}.premium strong{display:block;margin-bottom:5px}
+.empty{text-align:center;color:var(--muted);padding:55px 10px}
+footer{border-top:1px solid var(--border);color:var(--muted);text-align:center;padding:25px;font-size:13px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.search{width:150px}.hero h1{font-size:34px}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.search{display:none}.nav{gap:8px}.nav button{padding:9px 11px}.media{height:300px}}
+</style>
+</head>
+<body>
+<header class="top">
+<nav class="nav">
+  <div class="logo">Vibe<span>Hub</span></div>
+  <input id="search" class="search" placeholder="Pesquisar criadores...">
+  <button onclick="openModal('login')">Entrar</button>
+  <button class="primary" onclick="openModal('signup')">Criar conta</button>
+</nav>
+</header>
+
+<main>
+<section class="hero">
+  <h1>Descobre. Cria. Partilha.</h1>
+  <p>Uma plataforma para criadores publicarem fotos e vídeos e oferecerem conteúdo exclusivo aos seus seguidores.</p>
+</section>
+
+<div class="tabs">
+  <button class="tab active" onclick="filterPosts('all',this)">Para ti</button>
+  <button class="tab" onclick="filterPosts('free',this)">Grátis</button>
+  <button class="tab" onclick="filterPosts('premium',this)">💎 Premium</button>
+</div>
+
+<h2 class="section-title">Publicações recentes</h2>
+<section id="feed" class="grid"></section>
+
+<h2 class="section-title">Torna-te criador</h2>
+<div class="card" style="padding:22px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+  <div><h3>Publica o teu conteúdo</h3><p class="desc" style="margin-top:5px">Cria o teu perfil, publica conteúdo e oferece uma área exclusiva aos teus subscritores.</p></div>
+  <button class="btn primary" onclick="openModal('creator')">Começar</button>
+</div>
+</main>
+
+<footer>VibeHub © 2026 · Plataforma de criadores</footer>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+ <div class="modalbox">
+  <button class="close" onclick="closeModal()">×</button>
+  <div id="modalContent"></div>
+ </div>
+</div>
+
+<script>
+const posts=[
+ {id:1,creator:"Mia Studio",initial:"M",title:"Novo ensaio criativo",desc:"Fotografia e lifestyle em ambiente urbano.",type:"free",emoji:"📸"},
+ {id:2,creator:"Leo Visuals",initial:"L",title:"Behind the scenes",desc:"Bastidores exclusivos do meu novo projeto.",type:"premium",emoji:"🎬"},
+ {id:3,creator:"Ana Creates",initial:"A",title:"Diário de viagem",desc:"Momentos e vídeos da minha última viagem.",type:"free",emoji:"🌍"},
+ {id:4,creator:"Kai Motion",initial:"K",title:"Vídeo exclusivo",desc:"Novo conteúdo para a comunidade Premium.",type:"premium",emoji:"🎥"},
+ {id:5,creator:"Studio 24",initial:"S",title:"Sessão de fotos",desc:"Uma nova coleção de fotografias.",type:"free",emoji:"✨"},
+ {id:6,creator:"Noah Films",initial:"N",title:"Projeto secreto",desc:"Acesso antecipado para subscritores.",type:"premium",emoji:"🔒"}
+];
+let current="all";
+
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const feed=document.getElementById("feed");
+ const arr=posts.filter(p=>(current==="all"||p.type===current)&&p.creator.toLowerCase().includes(q));
+ feed.innerHTML=arr.length?arr.map(p=>`
+ <article class="card">
+  <div class="media"><div class="placeholder">${p.emoji}</div>${p.type==="premium"?'<span class="badge">🔒 PREMIUM</span>':''}</div>
+  <div class="body">
+   <div class="creator"><div class="avatar">${p.initial}</div><div><b>${p.creator}</b><br><small>@${p.creator.toLowerCase().replaceAll(" ","")}</small></div></div>
+   <div class="title">${p.title}</div><div class="desc">${p.desc}</div>
+   ${p.type==="premium"?'<div class="premium"><strong>Conteúdo exclusivo</strong><span class="desc">Subscreve o criador para desbloquear.</span></div>':''}
+   <div class="actions"><button class="like" onclick="this.classList.toggle('active');this.textContent=this.classList.contains('active')?'♥ Gostei':'♡ Gostar'">♡ Gostar</button><button onclick="openSubscribe('${p.creator}')">${p.type==="premium"?'💎 Subscrever':'💬 Comentar'}</button></div>
+  </div>
+ </article>`).join(""):'<div class="empty">Nenhuma publicação encontrada.</div>';
+}
+function filterPosts(type,el){current=type;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));el.classList.add("active");render()}
+document.getElementById("search").addEventListener("input",render);
+
+function openModal(kind){
+ const c=document.getElementById("modalContent");
+ if(kind==="login") c.innerHTML=`<h2>Entrar</h2><input placeholder="Email"><input type="password" placeholder="Palavra-passe"><button class="btn primary" style="width:100%;margin-top:10px" onclick="alert('Demo: login ligado apenas ao protótipo.');closeModal()">Entrar</button>`;
+ if(kind==="signup") c.innerHTML=`<h2>Criar conta</h2><input placeholder="Nome"><input placeholder="Email"><input type="password" placeholder="Palavra-passe"><button class="btn primary" style="width:100%;margin-top:10px" onclick="alert('Demo: conta criada no protótipo.');closeModal()">Criar conta</button>`;
+ if(kind==="creator") c.innerHTML=`<h2>Criar publicação</h2><input placeholder="Título"><textarea placeholder="Descrição"></textarea><select><option>Publicação gratuita</option><option>Conteúdo Premium</option></select><input type="file" accept="image/*,video/*"><button class="btn primary" style="width:100%;margin-top:10px" onclick="alert('Demo: o upload real será ligado ao armazenamento numa próxima versão.');closeModal()">Publicar</button>`;
+ document.getElementById("modal").classList.add("show");
+}
+function openSubscribe(name){openModal("signup");document.querySelector("#modalContent h2").textContent="Subscrever "+name;document.querySelector("#modalContent").insertAdjacentHTML("beforeend",'<p class="desc" style="margin-top:12px">No produto real, aqui ficará o checkout e o acesso Premium.</p>')}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+render();
+</script>
+</body>
+</html>

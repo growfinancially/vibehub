@@ -2237,7 +2237,7 @@ function render(){
             
             <button
              class="${post.commentedByMe ? "commented" : ""}"
-             onclick="postAction('${post.access_type}', '${post.id}', this)"
+             onclick="${premium ? `postAction('${post.access_type}', '${post.id}', this)` : `showComments('${post.id}')`}""
           >
            ${
              premium
@@ -2423,7 +2423,56 @@ async function sendComment(){
   alert("Comentário publicado!");
   }
 
+async function showComments(postId){
 
+  const { data: comments, error } =
+    await supabaseClient
+      .from("comments")
+      .select("content, created_at, user_id")
+      .eq("post_id", postId)
+      .order("created_at", { ascending: true });
+
+  if(error){
+    console.error(error);
+    alert("Não foi possível carregar os comentários.");
+    return;
+  }
+
+  const modalContent =
+    document.querySelector("#modalContent");
+
+  if(!comments || !comments.length){
+
+    modalContent.innerHTML = `
+      <h2>💬 Comentários</h2>
+      <p class="small">Ainda não existem comentários.</p>
+    `;
+
+  }else{
+
+    modalContent.innerHTML = `
+      <h2>💬 Comentários</h2>
+
+      <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
+        ${comments.map(function(comment){
+
+          return `
+            <div style="padding:12px; border-radius:10px; background:#20242b;">
+              ${escapeHTML(comment.content)}
+            </div>
+          `;
+
+        }).join("")}
+      </div>
+    `;
+  }
+
+  document
+    .querySelector("#modal")
+    .classList.add("show");
+  }
+
+  
 /* =================================
    FILTROS
 ================================= */

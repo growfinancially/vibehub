@@ -1801,9 +1801,17 @@ function mostrarUtilizador(user){
 
   userArea.style.display =
     "flex";
+ 
+  const notificationsBtn =
+  document.getElementById("notificationsBtn");
 
+if(notificationsBtn){
+  notificationsBtn.style.display = "block";
 }
 
+carregarNotificacoes();
+
+}
 
 /* =================================
    VERIFICAR SESSÃO

@@ -1489,71 +1489,6 @@ async function carregarPerfil(user){
 
     }
 
-    async function guardarPerfil(){
-
-  if(!currentUser || !supabaseClient){
-    return;
-  }
-
-  const name =
-    document.getElementById("editName")?.value.trim() || "";
-
-  const username =
-    document.getElementById("editUsername")?.value
-      .trim()
-      .replace(/^@/, "") || "";
-
-  const bio =
-    document.getElementById("editBio")?.value.trim() || "";
-
-  if(!name){
-    alert("O nome não pode ficar vazio.");
-    return;
-  }
-
-  if(!username){
-    alert("O username não pode ficar vazio.");
-    return;
-  }
-
-  try{
-
-    const { data, error } =
-      await supabaseClient
-        .from("profiles")
-        .update({
-          display_name: name,
-          username: username,
-          bio: bio
-        })
-        .eq("id", currentUser.id)
-        .select()
-        .single();
-
-    if(error){
-      console.error("Erro ao guardar perfil:", error);
-      alert("Não foi possível guardar as alterações.");
-      return;
-    }
-
-    currentUser.profile = data;
-
-    alert("Perfil atualizado!");
-
-    modal.classList.remove("show");
-
-    await openModal("profile");
-
-  }catch(error){
-
-    console.error("Erro ao guardar perfil:", error);
-
-    alert("Ocorreu um erro ao guardar o perfil.");
-
-  }
-
-  }
-
 
     /*
       Se ainda não existir perfil,
@@ -1623,6 +1558,88 @@ async function carregarPerfil(user){
 
 }
 
+
+async function guardarPerfil(){
+
+  if(!currentUser){
+    alert("Não estás com sessão iniciada.");
+    return;
+  }
+
+  const name =
+    document.getElementById("editName")?.value.trim() || "";
+
+  const username =
+    document.getElementById("editUsername")?.value
+      .trim()
+      .replace(/^@/, "") || "";
+
+  const bio =
+    document.getElementById("editBio")?.value.trim() || "";
+
+  if(!name){
+    alert("O nome não pode ficar vazio.");
+    return;
+  }
+
+  if(!username){
+    alert("O username não pode ficar vazio.");
+    return;
+  }
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("profiles")
+        .update({
+          display_name: name,
+          username: username,
+          bio: bio
+        })
+        .eq("id", currentUser.id)
+        .select()
+        .single();
+
+    if(result.error){
+
+      console.error(
+        "Erro ao guardar perfil:",
+        result.error
+      );
+
+      alert(
+        "Não foi possível guardar: " +
+        result.error.message
+      );
+
+      return;
+    }
+
+    currentUser.profile =
+      result.data;
+
+    alert("Perfil atualizado!");
+
+    closeModal();
+
+    await openModal("profile");
+
+  }catch(error){
+
+    console.error(
+      "Erro ao guardar perfil:",
+      error
+    );
+
+    alert(
+      "Ocorreu um erro ao guardar o perfil."
+    );
+
+  }
+
+}
+  
 
 /* =================================
    MOSTRAR UTILIZADOR

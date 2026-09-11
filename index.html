@@ -529,12 +529,13 @@ footer{
   <div class="logo">
     Vibe<span>Hub</span>
   </div>
-
+  
   <input
-    id="search"
-    class="search"
-    placeholder="Pesquisar criadores..."
-  >
+ id="search"
+ class="search"
+ placeholder="Pesquisar criadores ou publicações..."
+ oninput="searchPosts()"
+>
 
   <div id="authButtons">
 
@@ -3113,7 +3114,80 @@ function filterPosts(type,el){
 
 }
 
+  function escapeHtml(text){
 
+  const div = document.createElement("div");
+
+  div.textContent = text;
+
+  return div.innerHTML;
+  }
+
+/* =================================
+   PESQUISA
+================================= */
+
+function searchPosts(){
+
+  const input = document.getElementById("search");
+
+  if(!input) return;
+
+  const query = input.value.trim().toLowerCase();
+
+  const feed = document.getElementById("feed");
+
+  if(!feed) return;
+
+  // Sem pesquisa → mostrar tudo novamente
+  if(!query){
+    render();
+    return;
+  }
+
+  const resultados = posts.filter(post => {
+
+    const titulo = String(post.title || "").toLowerCase();
+    const descricao = String(post.description || "").toLowerCase();
+
+    const criador =
+      String(
+        post.creator_name ||
+        post.username ||
+        post.name ||
+        ""
+      ).toLowerCase();
+
+    return (
+      titulo.includes(query) ||
+      descricao.includes(query) ||
+      criador.includes(query)
+    );
+
+  });
+
+  if(!resultados.length){
+
+    feed.innerHTML = `
+      <div class="empty">
+        🔎 Nenhum resultado encontrado para
+        <strong>"${escapeHtml(query)}"</strong>.
+      </div>
+    `;
+
+    return;
+  }
+
+  // Guardar temporariamente os posts atuais
+  const postsOriginais = posts;
+
+  posts = resultados;
+
+  render();
+
+  posts = postsOriginais;
+  }
+  
 /* =================================
    PESQUISA
 ================================= */

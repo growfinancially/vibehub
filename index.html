@@ -2329,7 +2329,6 @@ function postAction(type, postId, button){
     return;
   }
 
-  // Guardar o botão que abriu os comentários
   window.activeCommentButton = button;
   window.activeCommentPostId = postId;
 
@@ -2354,9 +2353,10 @@ function postAction(type, postId, button){
   `;
 
   document.querySelector("#modal").classList.add("active");
-  }
+}
 
-  async function sendComment(){
+
+async function sendComment(){
 
   const text = document.getElementById("commentText").value.trim();
 
@@ -2386,19 +2386,15 @@ function postAction(type, postId, button){
     return;
   }
 
-  // Alterar o botão para "Comentado"
   if(window.activeCommentButton){
     window.activeCommentButton.classList.add("commented");
     window.activeCommentButton.innerHTML = "💬 Comentado";
   }
 
-  // Fechar o modal
-  if(typeof closeModal === "function"){
-    closeModal();
-  }
+  closeModal();
 
   alert("Comentário publicado!");
-    }
+  }
 
 
 /* =================================

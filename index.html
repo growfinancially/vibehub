@@ -254,6 +254,10 @@ main{
   color:var(--accent);
 }
 
+.actions button.commented{
+  color:var(--accent);
+}
+
 .premium{
   margin-top:13px;
   padding:13px;
@@ -2304,18 +2308,97 @@ async function toggleLike(button, postId){
    AÇÃO DO POST
 ================================= */
 
-function postAction(type){
+function postAction(type, postId, button){
 
   if(type === "premium"){
 
     if(!currentUser){
-
       openModal("login");
-
       return;
-
     }
 
+    alert(
+      "A área de subscrição Premium será ligada ao sistema de pagamentos no próximo passo."
+    );
+
+    return;
+  }
+
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+
+  // Guardar o botão que abriu os comentários
+  window.activeCommentButton = button;
+  window.activeCommentPostId = postId;
+
+  const modalContent = document.querySelector("#modalContent");
+
+  modalContent.innerHTML = `
+    <h2>💬 Comentar</h2>
+
+    <textarea
+      id="commentText"
+      placeholder="Escreve o teu comentário..."
+      maxlength="500"
+      style="width:100%; min-height:120px; margin:15px 0; padding:12px; border-radius:10px; resize:none;"
+    ></textarea>
+
+    <button
+      class="btn primary full"
+      onclick="sendComment()"
+    >
+      Publicar comentário
+    </button>
+  `;
+
+  document.querySelector("#modal").classList.add("active");
+  }
+
+  async function sendComment(){
+
+  const text = document.getElementById("commentText").value.trim();
+
+  if(!text){
+    alert("Escreve um comentário primeiro.");
+    return;
+  }
+
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+
+  const postId = window.activeCommentPostId;
+
+  const { error } = await supabaseClient
+    .from("comments")
+    .insert({
+      post_id: postId,
+      user_id: currentUser.id,
+      content: text
+    });
+
+  if(error){
+    console.error(error);
+    alert("Não foi possível publicar o comentário.");
+    return;
+  }
+
+  // Alterar o botão para "Comentado"
+  if(window.activeCommentButton){
+    window.activeCommentButton.classList.add("commented");
+    window.activeCommentButton.innerHTML = "💬 Comentado";
+  }
+
+  // Fechar o modal
+  if(typeof closeModal === "function"){
+    closeModal();
+  }
+
+  alert("Comentário publicado!");
+    }
 
     alert(
       "A área de subscrição Premium será ligada ao sistema de pagamentos no próximo passo."

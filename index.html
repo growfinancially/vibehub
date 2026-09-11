@@ -546,7 +546,7 @@ footer{
   onclick="openNotifications()"
   style="display:none"
 >
-  🔔 <span id="notificationCount"></span>
+   <span id="notificationCount"></span>
   </button>
 
   <div id="authButtons">
@@ -2712,7 +2712,48 @@ function render(){
    GOSTAR
 ================================= */
 
-async function toggleLike(button, postId){
+
+  /* =================================
+   CRIAR NOTIFICAÇÃO
+================================= */
+
+async function criarNotificacao({
+  userId,
+  type,
+  message,
+  postId,
+  actorId
+}){
+
+  if(!supabaseClient || !userId || !actorId){
+    return;
+  }
+
+  // Não criar notificação para nós próprios
+  if(userId === actorId){
+    return;
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("notifications")
+      .insert({
+        user_id: userId,
+        type: type,
+        message: message,
+        post_id: postId || null,
+        actor_id: actorId
+      });
+
+  if(error){
+    console.error(
+      "Erro ao criar notificação:",
+      error
+    );
+  }
+}
+  
+  async function toggleLike(button, postId){
 
   const { data: { user } } =
     await supabaseClient.auth.getUser();
@@ -2762,12 +2803,41 @@ async function toggleLike(button, postId){
         });
 
     if(error){
-      console.error(error);
-      return;
-    }
+  console.error(error);
+  return;
+}
 
-    button.textContent = "♥ Gostei";
-    button.classList.add("liked");
+button.textContent = "♥ Gostei";
+button.classList.add("liked");
+
+const post =
+  posts.find(function(item){
+    return item.id === postId;
+  });
+
+if(post){
+
+  const creatorId =
+    post.creator_id;
+
+  const profile =
+    currentUser?.profile || {};
+
+  const actorName =
+    profile.display_name ||
+    currentUser?.user_metadata?.name ||
+    currentUser?.email?.split("@")[0] ||
+    "Alguém";
+
+  await criarNotificacao({
+    userId: creatorId,
+    type: "like",
+    message: `${actorName} gostou da tua publicação.`,
+    postId: postId,
+    actorId: user.id
+  });
+
+  await carregarNotificacoes();
   }
 }
 
@@ -3197,14 +3267,32 @@ async function sendComment(){
       content: text
     });
 
-  if(error){
+  const post =
+  posts.find(function(item){
+    return item.id === postId;
+  });
 
-    console.error(error);
+if(post){
 
-    alert(
-      "Erro do Supabase: " +
-      error.message
-    );
+  const profile =
+    currentUser.profile || {};
+
+  const actorName =
+    profile.display_name ||
+    currentUser.user_metadata?.name ||
+    currentUser.email?.split("@")[0] ||
+    "Alguém";
+
+  await criarNotificacao({
+    userId: post.creator_id,
+    type: "comment",
+    message: `${actorName} comentou na tua publicação.`,
+    postId: postId,
+    actorId: currentUser.id
+  });
+
+  await carregarNotificacoes();
+}
 
     return;
   }

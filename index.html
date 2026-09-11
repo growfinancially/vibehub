@@ -2237,7 +2237,7 @@ function render(){
             
             <button
              class="${post.commentedByMe ? "commented" : ""}"
-             onclick="${premium ? `postAction('${post.access_type}', '${post.id}', this)` : `showComments('${post.id}')`}""
+             onclick="${premium ? `postAction('${post.access_type}', '${post.id}', this)` : `showComments('${post.id}', this)`}"
           >
            ${
              premium
@@ -2383,14 +2383,99 @@ function postAction(type, postId, button){
 }
 
 
-async function sendComment(){
+async function showComments(postId, button){
 
-  const text = document.getElementById("commentText").value.trim();
+  window.activeCommentPostId = postId;
+  window.activeCommentButton = button;
 
-  if(!text){
-    alert("Escreve um comentário primeiro.");
+  const { data: comments, error } =
+    await supabaseClient
+      .from("comments")
+      .select("content, created_at, user_id")
+      .eq("post_id", postId)
+      .order("created_at", { ascending: true });
+
+  if(error){
+    console.error(error);
+    alert("Não foi possível carregar os comentários.");
     return;
   }
+
+  const modalContent =
+    document.querySelector("#modalContent");
+
+  modalContent.innerHTML = `
+    <h2>💬 Comentários</h2>
+
+    <div style="
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:15px;
+      max-height:250px;
+      overflow-y:auto;
+    ">
+
+      ${
+        comments && comments.length
+        ? comments.map(function(comment){
+
+            return `
+              <div style="
+                padding:12px;
+                border-radius:10px;
+                background:#20242b;
+              ">
+                ${escapeHTML(comment.content)}
+              </div>
+            `;
+
+          }).join("")
+        : `
+          <p class="small">
+            Ainda não existem comentários.
+          </p>
+        `
+      }
+
+    </div>
+
+    ${
+      currentUser
+      ? `
+        <textarea
+          id="commentText"
+          placeholder="Escreve o teu comentário..."
+          maxlength="500"
+          style="
+            width:100%;
+            min-height:100px;
+            margin:15px 0 10px;
+            padding:12px;
+            border-radius:10px;
+            resize:none;
+          "
+        ></textarea>
+
+        <button
+          class="btn primary full"
+          onclick="sendComment()"
+        >
+          Publicar comentário
+        </button>
+      `
+      : `
+        <p class="small" style="margin-top:15px;">
+          Inicia sessão para comentar.
+        </p>
+      `
+    }
+  `;
+
+  document
+    .querySelector("#modal")
+    .classList.add("show");
+}
 
   if(!currentUser){
     openModal("login");

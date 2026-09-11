@@ -2238,15 +2238,21 @@ function render(){
             <button
              class="${post.commentedByMe ? "commented" : ""}"
              onclick="postAction('${post.access_type}', '${post.id}', this)"
-           >
-             ${
-               premium
-               ? "💎 Subscrever"
-               : post.commentedByMe
-                ? "💬 Comentado"
-                : "💬 Comentar"
-              }
-             </button>
+          >
+           ${
+             premium
+             ? "💎 Subscrever"
+             : post.commentedByMe
+              ? "💬 Comentado"
+              : "💬 Comentar"
+            }
+         
+            ${
+             !premium && post.commentCount
+              ? `<span class="comment-count">${post.commentCount}</span>`
+              : ""
+            }
+           </button>
 
             </div>
 

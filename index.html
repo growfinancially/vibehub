@@ -2359,7 +2359,8 @@ function postAction(type, postId, button){
   window.activeCommentButton = button;
   window.activeCommentPostId = postId;
 
-  const modalContent = document.querySelector("#modalContent");
+  const modalContent =
+    document.querySelector("#modalContent");
 
   modalContent.innerHTML = `
     <h2>💬 Comentar</h2>
@@ -2368,7 +2369,14 @@ function postAction(type, postId, button){
       id="commentText"
       placeholder="Escreve o teu comentário..."
       maxlength="500"
-      style="width:100%; min-height:120px; margin:15px 0; padding:12px; border-radius:10px; resize:none;"
+      style="
+        width:100%;
+        min-height:120px;
+        margin:15px 0;
+        padding:12px;
+        border-radius:10px;
+        resize:none;
+      "
     ></textarea>
 
     <button
@@ -2379,25 +2387,40 @@ function postAction(type, postId, button){
     </button>
   `;
 
-  document.querySelector("#modal").classList.add("show");
+  document
+    .querySelector("#modal")
+    .classList.add("show");
 }
 
+
+/* =================================
+   MOSTRAR COMENTÁRIOS
+================================= */
 
 async function showComments(postId, button){
 
   window.activeCommentPostId = postId;
   window.activeCommentButton = button;
 
-  const { data: comments, error } =
-    await supabaseClient
-      .from("comments")
-      .select("content, created_at, user_id")
-      .eq("post_id", postId)
-      .order("created_at", { ascending: true });
+  const {
+    data: comments,
+    error
+  } = await supabaseClient
+    .from("comments")
+    .select("content, created_at, user_id")
+    .eq("post_id", postId)
+    .order("created_at", {
+      ascending: true
+    });
 
   if(error){
+
     console.error(error);
-    alert("Não foi possível carregar os comentários.");
+
+    alert(
+      "Não foi possível carregar os comentários."
+    );
+
     return;
   }
 
@@ -2407,30 +2430,36 @@ async function showComments(postId, button){
   modalContent.innerHTML = `
     <h2>💬 Comentários</h2>
 
-    <div style="
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-top:15px;
-      max-height:250px;
-      overflow-y:auto;
-    ">
+    <div
+      style="
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+        margin-top:15px;
+        max-height:250px;
+        overflow-y:auto;
+      "
+    >
 
       ${
         comments && comments.length
+
         ? comments.map(function(comment){
 
             return `
-              <div style="
-                padding:12px;
-                border-radius:10px;
-                background:#20242b;
-              ">
+              <div
+                style="
+                  padding:12px;
+                  border-radius:10px;
+                  background:#20242b;
+                "
+              >
                 ${escapeHTML(comment.content)}
               </div>
             `;
 
           }).join("")
+
         : `
           <p class="small">
             Ainda não existem comentários.
@@ -2442,6 +2471,7 @@ async function showComments(postId, button){
 
     ${
       currentUser
+
       ? `
         <textarea
           id="commentText"
@@ -2464,8 +2494,12 @@ async function showComments(postId, button){
           Publicar comentário
         </button>
       `
+
       : `
-        <p class="small" style="margin-top:15px;">
+        <p
+          class="small"
+          style="margin-top:15px;"
+        >
           Inicia sessão para comentar.
         </p>
       `
@@ -2477,14 +2511,54 @@ async function showComments(postId, button){
     .classList.add("show");
 }
 
-  if(!currentUser){
-    openModal("login");
+
+/* =================================
+   PUBLICAR COMENTÁRIO
+================================= */
+
+async function sendComment(){
+
+  const textarea =
+    document.getElementById("commentText");
+
+  if(!textarea){
     return;
   }
 
-  const postId = window.activeCommentPostId;
+  const text =
+    textarea.value.trim();
 
-  const { error } = await supabaseClient
+  if(!text){
+
+    alert(
+      "Escreve um comentário primeiro."
+    );
+
+    return;
+  }
+
+  if(!currentUser){
+
+    openModal("login");
+
+    return;
+  }
+
+  const postId =
+    window.activeCommentPostId;
+
+  if(!postId){
+
+    alert(
+      "Não foi possível identificar a publicação."
+    );
+
+    return;
+  }
+
+  const {
+    error
+  } = await supabaseClient
     .from("comments")
     .insert({
       post_id: postId,
@@ -2493,71 +2567,35 @@ async function showComments(postId, button){
     });
 
   if(error){
+
     console.error(error);
-    alert("Erro do Supabase: " + error.message);
+
+    alert(
+      "Erro do Supabase: " +
+      error.message
+    );
+
     return;
   }
 
   if(window.activeCommentButton){
-    window.activeCommentButton.classList.add("commented");
-    window.activeCommentButton.innerHTML = "💬 Comentado";
+
+    window.activeCommentButton
+      .classList
+      .add("commented");
+
+    window.activeCommentButton.innerHTML =
+      "💬 Comentado";
   }
 
   closeModal();
 
-  alert("Comentário publicado!");
-  }
+  alert(
+    "Comentário publicado!"
+  );
+}
 
-async function showComments(postId){
 
-  const { data: comments, error } =
-    await supabaseClient
-      .from("comments")
-      .select("content, created_at, user_id")
-      .eq("post_id", postId)
-      .order("created_at", { ascending: true });
-
-  if(error){
-    console.error(error);
-    alert("Não foi possível carregar os comentários.");
-    return;
-  }
-
-  const modalContent =
-    document.querySelector("#modalContent");
-
-  if(!comments || !comments.length){
-
-    modalContent.innerHTML = `
-      <h2>💬 Comentários</h2>
-      <p class="small">Ainda não existem comentários.</p>
-    `;
-
-  }else{
-
-    modalContent.innerHTML = `
-      <h2>💬 Comentários</h2>
-
-      <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;">
-        ${comments.map(function(comment){
-
-          return `
-            <div style="padding:12px; border-radius:10px; background:#20242b;">
-              ${escapeHTML(comment.content)}
-            </div>
-          `;
-
-        }).join("")}
-      </div>
-    `;
-  }
-
-  document
-    .querySelector("#modal")
-    .classList.add("show");
-  }
-
-  
 /* =================================
    FILTROS
 ================================= */

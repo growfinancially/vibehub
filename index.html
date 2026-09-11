@@ -2173,22 +2173,62 @@ function render(){
    GOSTAR
 ================================= */
 
-function toggleLike(button){
+async function toggleLike(button, postId){
 
-  if(
-    button.textContent.includes("Gostei")
-  ){
+  const { data: { user } } =
+    await supabaseClient.auth.getUser();
 
-    button.textContent =
-      "♡ Gostar";
+  if(!user){
+    alert("Tens de iniciar sessão para gostar.");
+    return;
+  }
+
+  const { data: existing, error: checkError } =
+    await supabaseClient
+      .from("likes")
+      .select("id")
+      .eq("post_id", postId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+  if(checkError){
+    console.error(checkError);
+    alert("Não foi possível verificar o Like.");
+    return;
+  }
+
+  if(existing){
+
+    const { error } =
+      await supabaseClient
+        .from("likes")
+        .delete()
+        .eq("id", existing.id);
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    button.textContent = "♡ Gostar";
 
   }else{
 
-    button.textContent =
-      "♥ Gostei";
+    const { error } =
+      await supabaseClient
+        .from("likes")
+        .insert({
+          post_id: postId,
+          user_id: user.id
+        });
 
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    button.textContent = "♥ Gostei";
   }
-
 }
 
 

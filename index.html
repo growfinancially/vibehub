@@ -250,6 +250,10 @@ main{
   background:#252a32
 }
 
+.actions button.liked{
+  color:var(--accent);
+}
+
 .premium{
   margin-top:13px;
   padding:13px;
@@ -2228,6 +2232,7 @@ async function toggleLike(button, postId){
     }
 
     button.textContent = "♥ Gostei";
+    button.classList.add("liked");
   }
 }
 

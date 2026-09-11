@@ -1855,12 +1855,68 @@ async function carregarPosts(){
     }
 
 
-    posts =
-      result.data || [];
+    const userResult =
+  await supabaseClient.auth.getUser();
+
+const user =
+  userResult.data?.user || null;
 
 
-    render();
+const { data: likes, error: likesError } =
+  await supabaseClient
+    .from("likes")
+    .select("post_id,user_id");
 
+
+if(likesError){
+
+  console.error(
+    "Erro ao carregar likes:",
+    likesError
+  );
+
+}
+
+
+const likeCounts = {};
+const likedByMe = {};
+
+
+(likes || []).forEach(function(like){
+
+  likeCounts[like.post_id] =
+    (likeCounts[like.post_id] || 0) + 1;
+
+
+  if(user && like.user_id === user.id){
+
+    likedByMe[like.post_id] = true;
+
+  }
+
+});
+
+
+posts =
+  (result.data || []).map(function(post){
+
+    return {
+
+      ...post,
+
+      likeCount:
+        likeCounts[post.id] || 0,
+
+      likedByMe:
+        !!likedByMe[post.id]
+
+    };
+
+  });
+
+
+render();
+    
   }catch(error){
 
     console.error(error);
@@ -2143,12 +2199,16 @@ function render(){
 
 
             <div class="actions">
-
-              <button
-              onclick="toggleLike(this, '${post.id}')"
-                >  
-                ♡ Gostar
-                </button>
+            
+          <button
+            class="${post.likedByMe ? "liked" : ""}"
+            onclick="toggleLike(this, '${post.id}')"
+          >
+            ${post.likedByMe ? "♥ Gostei" : "♡ Gostar"}
+            <span class="like-count">
+             ${post.likeCount || 0}
+             </span>
+            </button>
 
               <button
                 onclick="postAction('${post.access_type}')"

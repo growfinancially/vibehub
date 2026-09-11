@@ -1037,187 +1037,118 @@ function openModal(type){
   }
 
 
-  /* PERFIL */
+/* PERFIL */
 
-  if(type === "profile"){
+if(type === "profile"){
 
-    if(!currentUser){
-      return;
-    }
-
-    const profile =
-      currentUser.profile || {};
-
-    const name =
-      profile.display_name ||
-      currentUser.user_metadata?.name ||
-      currentUser.email?.split("@")[0] ||
-      "Utilizador";
-
-    const avatar =
-  profile.avatar_url || "";
-
-const stats =
-  await carregarEstatisticasPerfil(currentUser.id);
-
-content.innerHTML = `
-
-  <div class="profile-card">
-
-    <div class="profile-avatar">
-
-      ${
-        avatar
-        ? `<img src="${escapeHTML(avatar)}" alt="Avatar">`
-        : getInitial(name)
-      }
-
-    </div>
-
-    <h2>
-      ${escapeHTML(name)}
-    </h2>
-
-    ${
-      profile.username
-      ? `<p>@${escapeHTML(profile.username)}</p>`
-      : ""
-    }
-
-    <p style="margin-top:8px">
-      ${escapeHTML(currentUser.email || "")}
-    </p>
-
-    ${
-      profile.bio
-      ? `<p style="margin-top:10px">${escapeHTML(profile.bio)}</p>`
-      : ""
-    }
-
-
-    <div class="profile-stats">
-
-      <div class="profile-stat">
-        <strong>${stats.posts}</strong>
-        <span>Publicações</span>
-      </div>
-
-      <div class="profile-stat">
-        <strong>${stats.likes}</strong>
-        <span>Gostos</span>
-      </div>
-
-      <div class="profile-stat">
-        <strong>${stats.comments}</strong>
-        <span>Comentários</span>
-      </div>
-
-    </div>
-
-
-    <div class="profile-buttons">
-
-      ${
-        profile.is_creator
-        ? `
-          <button
-            class="btn primary"
-            onclick="openModal('creator')"
-          >
-            ➕ Criar publicação
-          </button>
-        `
-        : `
-          <button
-            class="btn primary"
-            onclick="becomeCreator()"
-          >
-            ⭐ Tornar-me criador
-          </button>
-        `
-      }
-
-      <button
-        class="btn"
-        onclick="showMyPosts()"
-      >
-        📁 Minhas publicações
-      </button>
-
-    </div>
-
-  </div>
-
-`;
-
-      <div class="profile-card">
-
-        <div class="profile-avatar">
-
-          ${
-            avatar
-            ? `<img src="${escapeHTML(avatar)}" alt="Avatar">`
-            : getInitial(name)
-          }
-
-        </div>
-
-        <h2>
-          ${escapeHTML(name)}
-        </h2>
-
-        ${
-          profile.username
-          ? `<p>@${escapeHTML(profile.username)}</p>`
-          : ""
-        }
-
-        <p style="margin-top:8px">
-          ${escapeHTML(currentUser.email || "")}
-        </p>
-
-        ${
-          profile.bio
-          ? `<p style="margin-top:10px">${escapeHTML(profile.bio)}</p>`
-          : ""
-        }
-
-        <div class="profile-buttons">
-
-          ${
-            profile.is_creator
-            ? `
-              <button
-                class="btn primary"
-                onclick="openModal('creator')"
-              >
-                ➕ Criar publicação
-              </button>
-            `
-            : `
-              <button
-                class="btn primary"
-                onclick="becomeCreator()"
-              >
-                ⭐ Tornar-me criador
-              </button>
-            `
-          }
-
-          <button
-            class="btn"
-            onclick="showMyPosts()"
-          >
-            📁 Minhas publicações
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
+  if(!currentUser){
+    return;
   }
+
+  const profile =
+    currentUser.profile || {};
+
+  const name =
+    profile.display_name ||
+    currentUser.user_metadata?.name ||
+    currentUser.email?.split("@")[0] ||
+    "Utilizador";
+
+  const avatar =
+    profile.avatar_url || "";
+
+  const stats =
+    await carregarEstatisticasPerfil(currentUser.id);
+
+  content.innerHTML = `
+
+    <div class="profile-card">
+
+      <div class="profile-avatar">
+
+        ${
+          avatar
+          ? `<img src="${escapeHTML(avatar)}" alt="Avatar">`
+          : getInitial(name)
+        }
+
+      </div>
+
+      <h2>
+        ${escapeHTML(name)}
+      </h2>
+
+      ${
+        profile.username
+        ? `<p>@${escapeHTML(profile.username)}</p>`
+        : ""
+      }
+
+      <p style="margin-top:8px">
+        ${escapeHTML(currentUser.email || "")}
+      </p>
+
+      ${
+        profile.bio
+        ? `<p style="margin-top:10px">${escapeHTML(profile.bio)}</p>`
+        : ""
+      }
+
+      <div class="profile-stats">
+
+        <div class="profile-stat">
+          <strong>${stats.posts}</strong>
+          <span>Publicações</span>
+        </div>
+
+        <div class="profile-stat">
+          <strong>${stats.likes}</strong>
+          <span>Gostos</span>
+        </div>
+
+        <div class="profile-stat">
+          <strong>${stats.comments}</strong>
+          <span>Comentários</span>
+        </div>
+
+      </div>
+
+      <div class="profile-buttons">
+
+        ${
+          profile.is_creator
+          ? `
+            <button
+              class="btn primary"
+              onclick="openModal('creator')"
+            >
+              Criar publicação
+            </button>
+          `
+          : `
+            <button
+              class="btn primary"
+              onclick="becomeCreator()"
+            >
+              Tornar-me criador
+            </button>
+          `
+        }
+
+        <button
+          class="btn"
+          onclick="showMyPosts()"
+        >
+          Minhas publicações
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
 
 
   modal.classList.add("show");

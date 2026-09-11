@@ -2537,16 +2537,24 @@ function render(){
 
           ${
            currentUser && post.creator_id === currentUser.id
-           ? `
-          <button
-           class="btn"
-           onclick="deletePost('${post.id}')"
-           style="color:#ff5c5c;"
-          >
-           🗑️ Apagar
-          </button>
-         `
-         : ""
+? `
+<button
+ class="btn"
+ onclick="editPost('${post.id}')"
+ style="color:#7c5cff;"
+>
+ ✏️ Editar
+</button>
+
+<button
+ class="btn"
+ onclick="deletePost('${post.id}')"
+ style="color:#ff5c5c;"
+>
+ 🗑️ Apagar
+</button>
+`
+: ""
         }
 
         </div>
@@ -2697,6 +2705,124 @@ async function deletePost(postId){
 
   }
 
+  /* =================================
+   EDITAR PUBLICAÇÃO
+================================= */
+
+async function editPost(postId){
+
+  if(!currentUser){
+    alert("Tens de iniciar sessão.");
+    return;
+  }
+
+  const post =
+    posts.find(function(item){
+      return item.id === postId;
+    });
+
+  if(!post){
+    alert("Publicação não encontrada.");
+    return;
+  }
+
+  if(post.creator_id !== currentUser.id){
+    alert("Só podes editar as tuas próprias publicações.");
+    return;
+  }
+
+  const novoTitulo =
+    prompt(
+      "Editar título:",
+      post.title || ""
+    );
+
+  if(novoTitulo === null){
+    return;
+  }
+
+  const titulo =
+    novoTitulo.trim();
+
+  if(!titulo){
+    alert("O título não pode ficar vazio.");
+    return;
+  }
+
+  const novaDescricao =
+    prompt(
+      "Editar descrição:",
+      post.description || ""
+    );
+
+  if(novaDescricao === null){
+    return;
+  }
+
+  const descricao =
+    novaDescricao.trim();
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from("posts")
+        .update({
+          title: titulo,
+          description: descricao || null
+        })
+        .eq("id", postId)
+        .eq("creator_id", currentUser.id)
+        .select()
+        .single();
+
+    if(result.error){
+
+      console.error(
+        "Erro ao editar publicação:",
+        result.error
+      );
+
+      alert(
+        "Não foi possível editar a publicação:\n" +
+        result.error.message
+      );
+
+      return;
+    }
+
+    posts =
+      posts.map(function(item){
+
+        if(item.id === postId){
+
+          return {
+            ...item,
+            title: result.data.title,
+            description: result.data.description
+          };
+
+        }
+
+        return item;
+
+      });
+
+    render();
+
+    alert("Publicação editada com sucesso! ✏️");
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Ocorreu um erro ao editar a publicação."
+    );
+
+  }
+
+  }
 
 /* =================================
    AÇÃO DO POST

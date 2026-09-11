@@ -1211,7 +1211,7 @@ if(type === "profile"){
       class="btn primary"
       onclick="guardarPerfil()"
     >
-      💾 Guardar alterações
+       Guardar alterações
     </button>
 
   `;
@@ -2535,7 +2535,21 @@ function render(){
             }
            </button>
 
-            </div>
+          ${
+           currentUser && post.creator_id === currentUser.id
+           ? `
+          <button
+           class="btn"
+           onclick="deletePost('${post.id}')"
+           style="color:#ff5c5c;"
+          >
+           🗑️ Apagar
+          </button>
+         `
+         : ""
+        }
+
+        </div>
 
           </div>
 
@@ -2610,6 +2624,78 @@ async function toggleLike(button, postId){
     button.classList.add("liked");
   }
 }
+
+async function deletePost(postId){
+
+  if(!currentUser){
+    alert("Tens de iniciar sessão.");
+    return;
+  }
+
+  const confirmacao =
+    confirm(
+      "Apagar publicação?\n\nEsta ação não pode ser desfeita."
+    );
+
+  if(!confirmacao){
+    return;
+  }
+
+  try{
+
+    const { data, error } =
+      await supabaseClient
+        .from("posts")
+        .delete()
+        .eq("id", postId)
+        .eq("creator_id", currentUser.id)
+        .select();
+
+    if(error){
+
+      console.error(
+        "Erro ao apagar publicação:",
+        error
+      );
+
+      alert(
+        "Não foi possível apagar a publicação:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    if(!data || data.length === 0){
+
+      alert(
+        "A publicação não foi apagada. " +
+        "Verifica as permissões do Supabase."
+      );
+
+      return;
+    }
+
+    posts =
+      posts.filter(function(post){
+        return post.id !== postId;
+      });
+
+    render();
+
+    alert("Publicação apagada!");
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Ocorreu um erro ao apagar a publicação."
+    );
+
+  }
+
+  }
 
 
 /* =================================

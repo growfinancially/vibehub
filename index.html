@@ -418,6 +418,34 @@ main{
   margin-top:18px
 }
 
+.profile-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:18px 0 4px;
+}
+
+.profile-stat{
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px 6px;
+  text-align:center;
+}
+
+.profile-stat strong{
+  display:block;
+  font-size:18px;
+  color:var(--text);
+}
+
+.profile-stat span{
+  display:block;
+  margin-top:3px;
+  font-size:11px;
+  color:var(--muted);
+}
+
 .empty{
   grid-column:1/-1;
   padding:30px;
@@ -750,6 +778,88 @@ function getInitial(name){
    MODAIS
 ================================= */
 
+async function carregarEstatisticasPerfil(userId){
+
+  const stats = {
+    posts: 0,
+    likes: 0,
+    comments: 0
+  };
+
+  if(!userId || !supabaseClient){
+    return stats;
+  }
+
+  try{
+
+    // PUBLICAÇÕES
+    const postsResult = await supabaseClient
+      .from("posts")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("creator_id", userId);
+
+    if(postsResult.error){
+      console.error(
+        "Erro ao contar publicações:",
+        postsResult.error
+      );
+    }else{
+      stats.posts = postsResult.count || 0;
+    }
+
+
+    // GOSTOS DADOS PELO UTILIZADOR
+    const likesResult = await supabaseClient
+      .from("likes")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("user_id", userId);
+
+    if(likesResult.error){
+      console.error(
+        "Erro ao contar gostos:",
+        likesResult.error
+      );
+    }else{
+      stats.likes = likesResult.count || 0;
+    }
+
+
+    // COMENTÁRIOS FEITOS PELO UTILIZADOR
+    const commentsResult = await supabaseClient
+      .from("comments")
+      .select("*", {
+        count: "exact",
+        head: true
+      })
+      .eq("user_id", userId);
+
+    if(commentsResult.error){
+      console.error(
+        "Erro ao contar comentários:",
+        commentsResult.error
+      );
+    }else{
+      stats.comments = commentsResult.count || 0;
+    }
+
+  }catch(error){
+
+    console.error(
+      "Erro ao carregar estatísticas:",
+      error
+    );
+
+  }
+
+  return stats;
+}
+  
 function openModal(type){
 
   const modal =
@@ -945,9 +1055,100 @@ function openModal(type){
       "Utilizador";
 
     const avatar =
-      profile.avatar_url || "";
+  profile.avatar_url || "";
 
-    content.innerHTML = `
+const stats =
+  await carregarEstatisticasPerfil(currentUser.id);
+
+content.innerHTML = `
+
+  <div class="profile-card">
+
+    <div class="profile-avatar">
+
+      ${
+        avatar
+        ? `<img src="${escapeHTML(avatar)}" alt="Avatar">`
+        : getInitial(name)
+      }
+
+    </div>
+
+    <h2>
+      ${escapeHTML(name)}
+    </h2>
+
+    ${
+      profile.username
+      ? `<p>@${escapeHTML(profile.username)}</p>`
+      : ""
+    }
+
+    <p style="margin-top:8px">
+      ${escapeHTML(currentUser.email || "")}
+    </p>
+
+    ${
+      profile.bio
+      ? `<p style="margin-top:10px">${escapeHTML(profile.bio)}</p>`
+      : ""
+    }
+
+
+    <div class="profile-stats">
+
+      <div class="profile-stat">
+        <strong>${stats.posts}</strong>
+        <span>Publicações</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong>${stats.likes}</strong>
+        <span>Gostos</span>
+      </div>
+
+      <div class="profile-stat">
+        <strong>${stats.comments}</strong>
+        <span>Comentários</span>
+      </div>
+
+    </div>
+
+
+    <div class="profile-buttons">
+
+      ${
+        profile.is_creator
+        ? `
+          <button
+            class="btn primary"
+            onclick="openModal('creator')"
+          >
+            ➕ Criar publicação
+          </button>
+        `
+        : `
+          <button
+            class="btn primary"
+            onclick="becomeCreator()"
+          >
+            ⭐ Tornar-me criador
+          </button>
+        `
+      }
+
+      <button
+        class="btn"
+        onclick="showMyPosts()"
+      >
+        📁 Minhas publicações
+      </button>
+
+    </div>
+
+  </div>
+
+`;
 
       <div class="profile-card">
 

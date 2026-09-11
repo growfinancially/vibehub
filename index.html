@@ -2141,10 +2141,10 @@ function render(){
             <div class="actions">
 
               <button
-                onclick="toggleLike(this)"
-              >
+              onclick="toggleLike(this, '${post.id}')"
+                >  
                 ♡ Gostar
-              </button>
+                </button>
 
               <button
                 onclick="postAction('${post.access_type}')"

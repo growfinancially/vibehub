@@ -1113,6 +1113,13 @@ if(type === "profile"){
       </div>
 
       <div class="profile-buttons">
+      
+       <button
+        class="btn"
+        onclick="openModal('editProfile')"
+      >
+       ✏️ Editar perfil
+      </button>
 
         ${
           profile.is_creator
@@ -1148,6 +1155,67 @@ if(type === "profile"){
   `;
 
 }
+
+  if(type === "editProfile"){
+
+  if(!currentUser){
+    return;
+  }
+
+  const profile =
+    currentUser.profile || {};
+
+  const name =
+    profile.display_name ||
+    currentUser.user_metadata?.name ||
+    "";
+
+  const username =
+    profile.username ||
+    "";
+
+  const bio =
+    profile.bio ||
+    "";
+
+  content.innerHTML = `
+
+    <h2>Editar perfil</h2>
+
+    <label>Nome</label>
+
+    <input
+      id="editName"
+      type="text"
+      value="${escapeHTML(name)}"
+      placeholder="O teu nome"
+    >
+
+    <label>@Username</label>
+
+    <input
+      id="editUsername"
+      type="text"
+      value="${escapeHTML(username)}"
+      placeholder="username"
+    >
+
+    <label>Bio</label>
+
+    <textarea
+      id="editBio"
+      placeholder="Fala um pouco sobre ti..."
+    >${escapeHTML(bio)}</textarea>
+
+    <button
+      class="btn primary"
+      onclick="guardarPerfil()"
+    >
+      💾 Guardar alterações
+    </button>
+
+  `;
+  }
 
 
   modal.classList.add("show");

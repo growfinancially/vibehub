@@ -1886,15 +1886,31 @@ const likeCounts = {};
 const likedByMe = {};
 
 
-(likes || []).forEach(function(like){
+const { data: comments, error: commentsError } =
+  await supabaseClient
+    .from("comments")
+    .select("post_id,user_id");
 
-  likeCounts[like.post_id] =
-    (likeCounts[like.post_id] || 0) + 1;
+if(commentsError){
 
+  console.error(
+    "Erro ao carregar comentários:",
+    commentsError
+  );
 
-  if(user && like.user_id === user.id){
+}
 
-    likedByMe[like.post_id] = true;
+const commentCounts = {};
+const commentedByMe = {};
+
+(comments || []).forEach(function(comment){
+
+  commentCounts[comment.post_id] =
+    (commentCounts[comment.post_id] || 0) + 1;
+
+  if(user && comment.user_id === user.id){
+
+    commentedByMe[comment.post_id] = true;
 
   }
 
@@ -1908,12 +1924,17 @@ posts =
 
       ...post,
 
-      likeCount:
-        likeCounts[post.id] || 0,
+likeCount:
+  likeCounts[post.id] || 0,
 
-      likedByMe:
-        !!likedByMe[post.id]
+likedByMe:
+  !!likedByMe[post.id],
 
+commentCount:
+  commentCounts[post.id] || 0,
+
+commentedByMe:
+  !!commentedByMe[post.id]
     };
 
   });

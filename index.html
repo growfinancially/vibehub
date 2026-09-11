@@ -2382,7 +2382,7 @@ async function sendComment(){
 
   if(error){
     console.error(error);
-    alert("Não foi possível publicar o comentário.");
+    alert("Erro do Supabase: " + error.message);
     return;
   }
 

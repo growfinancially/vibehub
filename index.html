@@ -578,7 +578,7 @@ footer{
       class="user-profile-btn"
       onclick="openModal('profile')"
     >
-      👤 Perfil
+       Perfil
     </button>
 
     <button
@@ -1925,7 +1925,7 @@ async function becomeCreator(){
     closeModal();
 
     alert(
-      "Agora és criador! 🎉"
+      "Agora és criador!"
     );
 
 
@@ -2183,7 +2183,7 @@ async function createPost(){
 
 
     msg.textContent =
-      "Publicado com sucesso! 🎉";
+      "Publicado com sucesso!";
 
 
     /*
@@ -2660,10 +2660,10 @@ function render(){
           >
            ${
              premium
-             ? "💎 Subscrever"
+             ? "Subscrever"
              : post.commentedByMe
-              ? "💬 Comentado"
-              : "💬 Comentar"
+              ? "Comentado"
+              : "Comentar"
             }
          
             ${
@@ -2948,7 +2948,7 @@ async function editPost(postId){
 
     render();
 
-    alert("Publicação editada com sucesso! ✏️");
+    alert("Publicação editada com sucesso!");
 
   }catch(error){
 
@@ -2994,7 +2994,7 @@ function postAction(type, postId, button){
     document.querySelector("#modalContent");
 
   modalContent.innerHTML = `
-    <h2>💬 Comentar</h2>
+    <h2>Comentar</h2>
 
     <textarea
       id="commentText"
@@ -3059,7 +3059,7 @@ async function showComments(postId, button){
     document.querySelector("#modalContent");
 
   modalContent.innerHTML = `
-    <h2>💬 Comentários</h2>
+    <h2>Comentários</h2>
 
     <div
       style="
@@ -3216,7 +3216,7 @@ async function sendComment(){
       .add("commented");
 
     window.activeCommentButton.innerHTML =
-      "💬 Comentado";
+      "Comentado";
   }
 
   closeModal();

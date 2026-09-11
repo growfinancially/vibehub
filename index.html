@@ -2681,7 +2681,7 @@ function render(){
  onclick="editPost('${post.id}')"
  style="color:#7c5cff;"
 >
- ✏️ Editar
+  Editar
 </button>
 
 <button
@@ -2689,7 +2689,7 @@ function render(){
  onclick="deletePost('${post.id}')"
  style="color:#ff5c5c;"
 >
- 🗑️ Apagar
+  Apagar
 </button>
 `
 : ""
@@ -3307,7 +3307,7 @@ function searchPosts(){
 
     feed.innerHTML = `
       <div class="empty">
-        🔎 Nenhum resultado encontrado para
+         Nenhum resultado encontrado para
         <strong>"${escapeHtml(query)}"</strong>.
       </div>
     `;

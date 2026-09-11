@@ -1118,7 +1118,7 @@ if(type === "profile"){
         class="btn"
         onclick="openModal('editProfile')"
       >
-       ✏️ Editar perfil
+        Editar perfil
       </button>
 
         ${
@@ -1488,6 +1488,71 @@ async function carregarPerfil(user){
       return null;
 
     }
+
+    async function guardarPerfil(){
+
+  if(!currentUser || !supabaseClient){
+    return;
+  }
+
+  const name =
+    document.getElementById("editName")?.value.trim() || "";
+
+  const username =
+    document.getElementById("editUsername")?.value
+      .trim()
+      .replace(/^@/, "") || "";
+
+  const bio =
+    document.getElementById("editBio")?.value.trim() || "";
+
+  if(!name){
+    alert("O nome não pode ficar vazio.");
+    return;
+  }
+
+  if(!username){
+    alert("O username não pode ficar vazio.");
+    return;
+  }
+
+  try{
+
+    const { data, error } =
+      await supabaseClient
+        .from("profiles")
+        .update({
+          display_name: name,
+          username: username,
+          bio: bio
+        })
+        .eq("id", currentUser.id)
+        .select()
+        .single();
+
+    if(error){
+      console.error("Erro ao guardar perfil:", error);
+      alert("Não foi possível guardar as alterações.");
+      return;
+    }
+
+    currentUser.profile = data;
+
+    alert("Perfil atualizado!");
+
+    modal.classList.remove("show");
+
+    await openModal("profile");
+
+  }catch(error){
+
+    console.error("Erro ao guardar perfil:", error);
+
+    alert("Ocorreu um erro ao guardar o perfil.");
+
+  }
+
+  }
 
 
     /*

@@ -5763,17 +5763,6 @@ function openCreatePostFromCreatorArea(){
     }
 
 
-function closeExplore(){
-
-  const panel = document.getElementById("explorePanel");
-
-  if(panel){
-    panel.classList.remove("show");
-  }
-
-}
-
-
 function openExplore(){
 
   const panel = document.getElementById("explorePanel");
@@ -5855,23 +5844,6 @@ function renderExploreResults(){
     `;
 
   }
-
-  mainSearch.value = oldValue;
-
-  }
-
-  /*
-    Usamos temporariamente a pesquisa
-    que o VibeHub já possui.
-  */
-
-  const oldValue = mainSearch.value;
-
-  mainSearch.value = input.value;
-
-  render();
-
-  results.innerHTML = feed.innerHTML;
 
   mainSearch.value = oldValue;
 

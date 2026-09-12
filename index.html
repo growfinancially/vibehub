@@ -3250,29 +3250,34 @@ function render(){
           </div>
 
 
-          <div class="body">
+          <div class="creator">
 
-            <div class="creator">
+  <div
+    class="avatar"
+    onclick="openCreatorProfile('${post.creator_id}')"
+    style="cursor:pointer;"
+  >
+    ${avatarHTML}
+  </div>
 
-              <div class="avatar">
-                ${avatarHTML}
-              </div>
+  <div>
 
-              <div>
+    <b
+      onclick="openCreatorProfile('${post.creator_id}')"
+      style="cursor:pointer;"
+    >
+      ${escapeHTML(creator)}
+    </b>
 
-                <b>
-                  ${escapeHTML(creator)}
-                </b>
+    <br>
 
-                <br>
+    <span class="small">
+      @${escapeHTML(username)}
+    </span>
 
-                <span class="small">
-                  @${escapeHTML(username)}
-                </span>
+  </div>
 
-              </div>
-
-            </div>
+</div>
 
 
             <div class="title">

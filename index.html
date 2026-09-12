@@ -35,20 +35,24 @@ button,input,textarea,select{
 header{
   position:sticky;
   top:0;
-  z-index:10;
-  background:rgba(11,13,16,.94);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border)
+  z-index:100;
+  background:rgba(11,13,16,.88);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  box-shadow:0 8px 30px rgba(0,0,0,.18);
 }
 
 .nav{
+  width:100%;
   max-width:1150px;
-  height:68px;
+  min-height:68px;
   margin:auto;
-  padding:0 18px;
+  padding:10px 18px;
   display:flex;
   align-items:center;
-  gap:10px
+  gap:12px;
+  box-sizing:border-box;
 }
 
 .logo{

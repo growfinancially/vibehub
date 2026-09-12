@@ -3152,7 +3152,7 @@ function render(){
             class="${post.likedByMe ? "liked" : ""}"
             onclick="toggleLike(this, '${post.id}')"
           >
-            ${post.likedByMe ? "♥ Gostei" : "♡ Gostar"}
+            ${post.likedByMe ? "♥" : "♡"}
             <span class="like-count">
              ${post.likeCount || 0}
              </span>

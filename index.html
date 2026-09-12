@@ -551,6 +551,78 @@ footer{
   color:white;
   font-weight:bold;
 }
+
+/* =========================
+   PERFIL DO CRIADOR
+========================= */
+
+.creator-profile{
+  width:min(720px, 94vw);
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+.creator-profile-header{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:10px 0 20px;
+}
+
+.creator-profile-avatar{
+  width:80px;
+  height:80px;
+  min-width:80px;
+  border-radius:50%;
+  background:var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  font-size:32px;
+}
+
+.creator-profile-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.creator-profile-info h2{
+  margin:0 0 5px;
+}
+
+.creator-profile-info p{
+  margin:4px 0;
+  color:var(--muted);
+}
+
+.creator-profile-stats{
+  display:flex;
+  gap:35px;
+  padding:15px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+
+.creator-profile-stats div{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.creator-profile-stats strong{
+  font-size:20px;
+}
+
+.creator-profile-stats span{
+  color:var(--muted);
+  font-size:13px;
+}
+
+#creatorProfilePosts{
+  margin-top:20px;
+}
   
 </style>
 </head>
@@ -1849,6 +1921,97 @@ if(type === "profile"){
 }
 
 
+function openCreatorProfile(creatorId){
+
+  if(!creatorId){
+    return;
+  }
+
+  const creator =
+    profiles.find(function(profile){
+      return profile.id === creatorId;
+    });
+
+  if(!creator){
+    alert("Perfil do criador não encontrado.");
+    return;
+  }
+
+  const modal =
+    document.getElementById("creatorProfileModal");
+
+  const name =
+    document.getElementById("creatorProfileName");
+
+  const username =
+    document.getElementById("creatorProfileUsername");
+
+  const bio =
+    document.getElementById("creatorProfileBio");
+
+  const avatar =
+    document.getElementById("creatorProfileAvatar");
+
+  name.textContent =
+    creator.display_name ||
+    creator.username ||
+    "Criador";
+
+  username.textContent =
+    creator.username
+      ? "@" + creator.username
+      : "";
+
+  bio.textContent =
+    creator.bio ||
+    "Este criador ainda não adicionou uma biografia.";
+
+  if(creator.avatar_url){
+
+    avatar.innerHTML =
+      `<img src="${escapeHTML(creator.avatar_url)}" alt="">`;
+
+  }else{
+
+    avatar.textContent = "👤";
+  }
+
+  const creatorPosts =
+    posts.filter(function(post){
+      return post.creator_id === creatorId;
+    });
+
+  document.getElementById("creatorPostCount")
+    .textContent = creatorPosts.length;
+
+  document.getElementById("creatorFollowerCount")
+    .textContent = "0";
+
+  document.getElementById("creatorProfilePosts").innerHTML =
+    creatorPosts.length
+      ? creatorPosts.map(function(post){
+          return `
+            <div class="post">
+              ${escapeHTML(post.content || "")}
+            </div>
+          `;
+        }).join("")
+      : "<p>Nenhuma publicação ainda.</p>";
+
+  modal.style.display = "flex";
+}
+
+
+function closeCreatorProfile(){
+
+  const modal =
+    document.getElementById("creatorProfileModal");
+
+  if(modal){
+    modal.style.display = "none";
+  }
+      }
+  
 function closeModal(){
 
   document
@@ -4059,5 +4222,64 @@ iniciar();
 
 </script>
 
+<!-- PERFIL DO CRIADOR -->
+<div id="creatorProfileModal" class="modal" style="display:none;">
+
+  <div class="modal-content creator-profile">
+
+    <button
+      class="close"
+      onclick="closeCreatorProfile()"
+    >
+      ×
+    </button>
+
+    <div class="creator-profile-header">
+
+      <div
+        id="creatorProfileAvatar"
+        class="creator-profile-avatar"
+      >
+        👤
+      </div>
+
+      <div class="creator-profile-info">
+
+        <h2 id="creatorProfileName">
+          Criador
+        </h2>
+
+        <p id="creatorProfileUsername">
+          @username
+        </p>
+
+        <p id="creatorProfileBio">
+          Este criador ainda não adicionou uma biografia.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="creator-profile-stats">
+
+      <div>
+        <strong id="creatorPostCount">0</strong>
+        <span>Publicações</span>
+      </div>
+
+      <div>
+        <strong id="creatorFollowerCount">0</strong>
+        <span>Seguidores</span>
+      </div>
+
+    </div>
+
+    <div id="creatorProfilePosts"></div>
+
+  </div>
+
+</div>
+  
 </body>
 </html>

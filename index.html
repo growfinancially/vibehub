@@ -56,10 +56,19 @@ header{
 }
 
 .logo{
-  font-size:23px;
+  font-size:25px;
   font-weight:900;
-  letter-spacing:-1px;
-  margin-right:auto
+  letter-spacing:-1.2px;
+  margin-right:auto;
+  color:var(--text);
+  white-space:nowrap;
+  cursor:pointer;
+  transition:opacity .2s ease, transform .2s ease;
+}
+
+.logo:hover{
+  opacity:.9;
+  transform:translateY(-1px);
 }
 
 .logo span{

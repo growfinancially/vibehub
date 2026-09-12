@@ -3762,16 +3762,30 @@ async function sendComment(){
   }
 
   const {
-    error
-  } = await supabaseClient
-    .from("comments")
-    .insert({
-      post_id: postId,
-      user_id: currentUser.id,
-      content: text
-    });
+  error
+} = await supabaseClient
+  .from("comments")
+  .insert({
+    post_id: postId,
+    user_id: currentUser.id,
+    content: text
+  });
 
-  const post =
+if(error){
+
+  console.error(
+    "Erro ao publicar comentário:",
+    error
+  );
+
+  alert(
+    "Não foi possível publicar o comentário."
+  );
+
+  return;
+}
+
+const post =
   posts.find(function(item){
     return item.id === postId;
   });
@@ -3794,12 +3808,7 @@ if(post){
     postId: postId,
     actorId: currentUser.id
   });
-
-  await carregarNotificacoes();
 }
-
-    return;
-  }
 
   if(window.activeCommentButton){
 

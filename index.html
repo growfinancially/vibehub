@@ -519,7 +519,39 @@ footer{
     align-items:flex-start
   }
 
+.chat-user{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  margin:6px 0;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--card);
+  color:var(--text);
+  cursor:pointer;
+  text-align:left;
 }
+
+.chat-user:hover{
+  background:var(--card2);
+}
+
+.chat-user .avatar{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:50%;
+  object-fit:cover;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--accent);
+  color:white;
+  font-weight:bold;
+}
+  
 </style>
 </head>
 
@@ -540,6 +572,15 @@ footer{
  oninput="render()"
 >
 
+<button
+  id="chatBtn"
+  class="btn"
+  onclick="openChat()"
+  style="display:none"
+>
+  💬 Chat
+</button>
+  
   <button
   id="notificationsBtn"
   class="btn"
@@ -632,7 +673,7 @@ footer{
     class="tab"
     onclick="filterPosts('premium',this)"
   >
-    💎 Premium
+    💎 Exclusivo
   </button>
 
 </div>
@@ -755,6 +796,410 @@ let currentUser = null;
 let posts = [];
   
 
+/* =================================
+   CHAT
+================================= */
+
+async function openChat(){
+
+  if(!currentUser){
+    return;
+  }
+
+  const content =
+    document.getElementById("modalContent");
+
+  content.innerHTML = `
+    <h2>💬 Chat</h2>
+
+    <input
+      id="chatSearch"
+      class="input"
+      placeholder="Pesquisar utilizador..."
+      oninput="carregarUtilizadoresChat()"
+    >
+
+    <div id="chatUsers">
+      <p class="desc">
+        A carregar utilizadores...
+      </p>
+    </div>
+  `;
+
+  document
+    .getElementById("modal")
+    .classList.add("show");
+
+  await carregarUtilizadoresChat();
+}
+
+
+async function carregarUtilizadoresChat(){
+
+  if(!currentUser || !supabaseClient){
+    return;
+  }
+
+  const search =
+    document
+      .getElementById("chatSearch")
+      ?.value
+      ?.trim()
+      ?.toLowerCase() || "";
+
+  const result =
+    await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        username,
+        display_name,
+        avatar_url
+      `)
+      .neq("id", currentUser.id)
+      .limit(50);
+
+  if(result.error){
+
+    console.error(
+      "Erro ao carregar utilizadores:",
+      result.error
+    );
+
+    return;
+  }
+
+  let users = result.data || [];
+
+  if(search){
+
+    users = users.filter(user => {
+
+      const name =
+        (
+          user.display_name ||
+          user.username ||
+          ""
+        ).toLowerCase();
+
+      return name.includes(search);
+    });
+  }
+
+  const container =
+    document.getElementById("chatUsers");
+
+  if(!container){
+    return;
+  }
+
+  if(!users.length){
+
+    container.innerHTML = `
+      <p class="desc">
+        Nenhum utilizador encontrado.
+      </p>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    users.map(user => {
+
+      const name =
+        user.display_name ||
+        user.username ||
+        "Utilizador";
+
+      return `
+        <button
+          class="chat-user"
+          onclick="abrirConversa('${user.id}')"
+        >
+
+          ${
+            user.avatar_url
+            ? `
+              <img
+                src="${user.avatar_url}"
+                class="avatar"
+              >
+            `
+            : `
+              <div class="avatar">
+                ${escapeHTML(name.charAt(0).toUpperCase())}
+              </div>
+            `
+          }
+
+          <div>
+            <strong>
+              ${escapeHTML(name)}
+            </strong>
+
+            <div class="desc">
+              @${escapeHTML(user.username || "")}
+            </div>
+          </div>
+
+        </button>
+      `;
+
+    }).join("");
+}
+
+
+async function abrirConversa(receiverId){
+
+  if(!currentUser){
+    return;
+  }
+
+  const profileResult =
+    await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        username,
+        display_name,
+        avatar_url
+      `)
+      .eq("id", receiverId)
+      .single();
+
+  if(profileResult.error){
+
+    console.error(
+      "Erro ao carregar utilizador:",
+      profileResult.error
+    );
+
+    return;
+  }
+
+  const receiver =
+    profileResult.data;
+
+  const receiverName =
+    receiver.display_name ||
+    receiver.username ||
+    "Utilizador";
+
+  const content =
+    document.getElementById("modalContent");
+
+  content.innerHTML = `
+    <div
+      style="
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin-bottom:15px;
+      "
+    >
+
+      <button
+        class="btn"
+        onclick="openChat()"
+      >
+        ←
+      </button>
+
+      <div>
+        <strong>
+          ${escapeHTML(receiverName)}
+        </strong>
+
+        <div class="desc">
+          @${escapeHTML(receiver.username || "")}
+        </div>
+      </div>
+
+    </div>
+
+    <div
+      id="chatMessages"
+      style="
+        max-height:350px;
+        overflow-y:auto;
+        padding:5px;
+        margin-bottom:12px;
+      "
+    >
+      A carregar mensagens...
+    </div>
+
+    <div
+      style="
+        display:flex;
+        gap:8px;
+      "
+    >
+
+      <input
+        id="messageInput"
+        class="input"
+        placeholder="Escreve uma mensagem..."
+        onkeydown="
+          if(event.key === 'Enter'){
+            sendMessage('${receiverId}');
+          }
+        "
+      >
+
+      <button
+        class="btn primary"
+        onclick="sendMessage('${receiverId}')"
+      >
+        Enviar
+      </button>
+
+    </div>
+  `;
+
+  await carregarMensagens(receiverId);
+}
+
+
+async function carregarMensagens(receiverId){
+
+  const container =
+    document.getElementById("chatMessages");
+
+  if(!container){
+    return;
+  }
+
+  const result =
+    await supabaseClient
+      .from("messages")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${currentUser.id})`
+      )
+      .order("created_at", {
+        ascending:true
+      });
+
+  if(result.error){
+
+    console.error(
+      "Erro ao carregar mensagens:",
+      result.error
+    );
+
+    container.innerHTML = `
+      <p class="desc">
+        Não foi possível carregar as mensagens.
+      </p>
+    `;
+
+    return;
+  }
+
+  const messages =
+    result.data || [];
+
+  if(!messages.length){
+
+    container.innerHTML = `
+      <p class="desc">
+        Ainda não existem mensagens. Sê o primeiro a enviar uma.
+      </p>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    messages.map(message => {
+
+      const mine =
+        message.sender_id === currentUser.id;
+
+      return `
+        <div
+          style="
+            display:flex;
+            justify-content:${mine ? "flex-end" : "flex-start"};
+            margin:7px 0;
+          "
+        >
+
+          <div
+            style="
+              max-width:75%;
+              padding:10px 13px;
+              border-radius:14px;
+              background:${mine ? "var(--accent)" : "var(--card2)"};
+            "
+          >
+            ${escapeHTML(message.content)}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  container.scrollTop =
+    container.scrollHeight;
+
+  await supabaseClient
+    .from("messages")
+    .update({
+      is_read:true
+    })
+    .eq("sender_id", receiverId)
+    .eq("receiver_id", currentUser.id)
+    .eq("is_read", false);
+}
+
+
+async function sendMessage(receiverId){
+
+  const input =
+    document.getElementById("messageInput");
+
+  if(!input){
+    return;
+  }
+
+  const content =
+    input.value.trim();
+
+  if(!content){
+    return;
+  }
+
+  const result =
+    await supabaseClient
+      .from("messages")
+      .insert({
+        sender_id:currentUser.id,
+        receiver_id:receiverId,
+        content:content
+      });
+
+  if(result.error){
+
+    console.error(
+      "Erro ao enviar mensagem:",
+      result.error
+    );
+
+    alert("Não foi possível enviar a mensagem.");
+
+    return;
+  }
+
+  input.value = "";
+
+  await carregarMensagens(receiverId);
+}
+  
+  
   /* =================================
    NOTIFICAÇÕES
 ================================= */
@@ -1807,6 +2252,13 @@ function mostrarUtilizador(user){
 
 if(notificationsBtn){
   notificationsBtn.style.display = "block";
+}
+
+const chatBtn =
+  document.getElementById("chatBtn");
+
+if(chatBtn){
+  chatBtn.style.display = "block";
 }
 
 carregarNotificacoes();

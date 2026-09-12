@@ -3044,6 +3044,20 @@ const chatBtn =
 if(chatBtn){
   chatBtn.style.display = "block";
 }
+
+  const creatorAreaBtn =
+  document.getElementById("creatorAreaBtn");
+
+if(creatorAreaBtn){
+
+  const isCreator =
+    currentUser?.profile?.is_creator === true;
+
+  creatorAreaBtn.style.display =
+    isCreator
+      ? "block"
+      : "none";
+}
   
 carregarMensagensNaoLidas();
   

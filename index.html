@@ -1508,16 +1508,41 @@ footer{
   box-shadow:none;
 
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-
-  font-size:30px;
-  font-weight:400;
-  line-height:1;
+  gap:3px;
 
   cursor:pointer;
   transition:.2s ease;
 }
+
+.create-plus{
+  font-size:28px;
+  font-weight:400;
+  line-height:24px;
+}
+
+.create-label{
+  font-size:11px;
+  font-weight:600;
+  line-height:14px;
+}
+
+.vibe-create-button:hover{
+  background:transparent;
+  color:var(--text);
+  transform:none;
+}
+
+.vibe-create-button:active{
+  transform:scale(.94);
+  background:transparent;
+}
+
+.vibe-create-button.active{
+  color:var(--accent);
+  }
 
 .vibe-create-button:hover{
   background:transparent;
@@ -6354,12 +6379,13 @@ async function renderExploreResults(){
   </button>
 
   <button
-    class="vibe-bottom-item vibe-create-button"
-    type="button"
-    onclick="openModal('creator')"
-    aria-label="Criar publicação"
-  >
-    +
+  class="vibe-bottom-item vibe-create-button"
+  type="button"
+  onclick="openModal('creator')"
+  aria-label="Criar publicação"
+>
+  <span class="create-plus">+</span>
+  <span class="create-label">Criar</span>
   </button>
 
   <button

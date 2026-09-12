@@ -1921,19 +1921,9 @@ if(type === "profile"){
 }
 
 
-function openCreatorProfile(creatorId){
+async function openCreatorProfile(creatorId){
 
-  if(!creatorId){
-    return;
-  }
-
-  const creator =
-    profiles.find(function(profile){
-      return profile.id === creatorId;
-    });
-
-  if(!creator){
-    alert("Perfil do criador não encontrado.");
+  if(!creatorId || !supabaseClient){
     return;
   }
 
@@ -1952,53 +1942,256 @@ function openCreatorProfile(creatorId){
   const avatar =
     document.getElementById("creatorProfileAvatar");
 
+  const postCount =
+    document.getElementById("creatorPostCount");
+
+  const followerCount =
+    document.getElementById("creatorFollowerCount");
+
+  const postsContainer =
+    document.getElementById("creatorProfilePosts");
+
+
+  if(
+    !modal ||
+    !name ||
+    !username ||
+    !bio ||
+    !avatar ||
+    !postCount ||
+    !followerCount ||
+    !postsContainer
+  ){
+    return;
+  }
+
+
+  /* Abrir imediatamente */
+
+  modal.style.display = "flex";
+
+  postsContainer.innerHTML =
+    `<p class="desc">A carregar perfil...</p>`;
+
+
+  /* =========================
+     CARREGAR PERFIL
+  ========================= */
+
+  const profileResult =
+    await supabaseClient
+      .from("profiles")
+      .select(`
+        id,
+        username,
+        display_name,
+        bio,
+        avatar_url,
+        is_creator
+      `)
+      .eq("id", creatorId)
+      .maybeSingle();
+
+
+  if(profileResult.error){
+
+    console.error(
+      "Erro ao carregar perfil do criador:",
+      profileResult.error
+    );
+
+    postsContainer.innerHTML =
+      `<p class="desc">
+        Não foi possível carregar este perfil.
+      </p>`;
+
+    return;
+  }
+
+
+  const creator =
+    profileResult.data;
+
+
+  if(!creator){
+
+    postsContainer.innerHTML =
+      `<p class="desc">
+        Perfil do criador não encontrado.
+      </p>`;
+
+    return;
+  }
+
+
+  /* =========================
+     DADOS DO PERFIL
+  ========================= */
+
   name.textContent =
     creator.display_name ||
     creator.username ||
     "Criador";
+
 
   username.textContent =
     creator.username
       ? "@" + creator.username
       : "";
 
+
   bio.textContent =
     creator.bio ||
     "Este criador ainda não adicionou uma biografia.";
 
+
+  /* =========================
+     AVATAR
+  ========================= */
+
   if(creator.avatar_url){
 
     avatar.innerHTML =
-      `<img src="${escapeHTML(creator.avatar_url)}" alt="">`;
+      `<img
+        src="${escapeHTML(creator.avatar_url)}"
+        alt=""
+      >`;
 
   }else{
 
-    avatar.textContent = "👤";
+    avatar.textContent =
+      "👤";
   }
 
+
+  /* =========================
+     CARREGAR PUBLICAÇÕES
+  ========================= */
+
+  const postsResult =
+    await supabaseClient
+      .from("posts")
+      .select(`
+        id,
+        creator_id,
+        title,
+        description,
+        media_url,
+        media_type,
+        access_type,
+        created_at
+      `)
+      .eq("creator_id", creatorId)
+      .order("created_at", {
+        ascending: false
+      });
+
+
+  if(postsResult.error){
+
+    console.error(
+      "Erro ao carregar publicações do criador:",
+      postsResult.error
+    );
+
+    postCount.textContent = "0";
+
+    followerCount.textContent = "0";
+
+    postsContainer.innerHTML =
+      `<p class="desc">
+        Não foi possível carregar as publicações.
+      </p>`;
+
+    return;
+  }
+
+
   const creatorPosts =
-    posts.filter(function(post){
-      return post.creator_id === creatorId;
-    });
+    postsResult.data || [];
 
-  document.getElementById("creatorPostCount")
-    .textContent = creatorPosts.length;
 
-  document.getElementById("creatorFollowerCount")
-    .textContent = "0";
+  /* =========================
+     ESTATÍSTICAS
+  ========================= */
 
-  document.getElementById("creatorProfilePosts").innerHTML =
-    creatorPosts.length
-      ? creatorPosts.map(function(post){
-          return `
-            <div class="post">
-              ${escapeHTML(post.content || "")}
-            </div>
-          `;
-        }).join("")
-      : "<p>Nenhuma publicação ainda.</p>";
+  postCount.textContent =
+    creatorPosts.length;
 
-  modal.style.display = "flex";
+
+  /* Seguidores será implementado
+     quando criarmos o sistema de seguidores */
+
+  followerCount.textContent =
+    "0";
+
+
+  /* =========================
+     MOSTRAR PUBLICAÇÕES
+  ========================= */
+
+  if(!creatorPosts.length){
+
+    postsContainer.innerHTML =
+      `<p class="desc">
+        Este criador ainda não tem publicações.
+      </p>`;
+
+    return;
+  }
+
+
+  postsContainer.innerHTML =
+    creatorPosts.map(function(post){
+
+      return `
+        <div
+          style="
+            padding:14px 0;
+            border-bottom:1px solid var(--border);
+          "
+        >
+
+          <strong>
+            ${escapeHTML(
+              post.title || "Publicação"
+            )}
+          </strong>
+
+
+          ${
+            post.description
+              ? `
+                <p
+                  class="desc"
+                  style="margin-top:6px;"
+                >
+                  ${escapeHTML(
+                    post.description
+                  )}
+                </p>
+              `
+              : ""
+          }
+
+
+          ${
+            post.access_type === "premium"
+              ? `
+                <div
+                  class="premium"
+                  style="margin-top:10px;"
+                >
+                  🔒 Conteúdo Premium
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+
+    }).join("");
 }
 
 

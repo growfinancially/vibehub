@@ -3630,13 +3630,17 @@ function render(){
 
 
       const matchesSearch =
-        creator
-          .toLowerCase()
-          .includes(q) ||
+    creator
+    .toLowerCase()
+    .includes(q) ||
 
-        (post.title || "")
-          .toLowerCase()
-          .includes(q);
+   (post.title || "")
+    .toLowerCase()
+    .includes(q) ||
+
+   (post.description || "")
+    .toLowerCase()
+    .includes(q);
 
 
       return matchesType && matchesSearch;

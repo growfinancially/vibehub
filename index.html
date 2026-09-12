@@ -467,6 +467,18 @@ main{
   padding:10px 0
 }
 
+  .profile-card{
+  position:relative;
+}
+
+.profile-logout{
+  display:block;
+  position:absolute;
+  top:12px;
+  left:12px;
+  z-index:2;
+}
+  
 .profile-avatar{
   width:85px;
   height:85px;
@@ -2146,6 +2158,13 @@ if(type === "profile"){
   content.innerHTML = `
 
     <div class="profile-card">
+    
+     <button
+      class="logout-btn profile-logout"
+      onclick="logout()"
+     >
+      Sair
+      </button>
 
       <div class="profile-avatar">
 

@@ -919,6 +919,86 @@ footer{
     right:10px;
   }
 }
+
+  /* =========================
+   ÁREA DO CRIADOR
+========================= */
+
+.creator-area{
+  width:min(720px,94vw);
+  max-height:90vh;
+  overflow-y:auto;
+  position:relative;
+}
+
+.creator-area h2{
+  margin:0 0 6px;
+}
+
+.creator-area-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  margin-top:25px;
+}
+
+.creator-area-card{
+  min-height:150px;
+
+  padding:20px;
+
+  border:1px solid var(--border);
+  border-radius:16px;
+
+  background:var(--card2);
+  color:var(--text);
+
+  text-align:left;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:7px;
+
+  transition:
+    transform .2s,
+    border-color .2s,
+    background .2s;
+}
+
+button.creator-area-card{
+  cursor:pointer;
+}
+
+button.creator-area-card:hover{
+  transform:translateY(-2px);
+  border-color:var(--accent);
+  background:#20242c;
+}
+
+.creator-area-card span{
+  font-size:28px;
+}
+
+.creator-area-card strong{
+  font-size:16px;
+}
+
+.creator-area-card small{
+  color:var(--muted);
+  line-height:1.4;
+}
+
+@media(max-width:600px){
+
+  .creator-area-grid{
+    grid-template-columns:1fr;
+  }
+
+  .creator-area-card{
+    min-height:125px;
+  }
+}
   
 </style>
 </head>
@@ -987,6 +1067,16 @@ footer{
       class="user-profile-btn"
       onclick="openModal('profile')"
     >
+      
+<button
+  id="creatorAreaBtn"
+  class="btn"
+  onclick="openCreatorArea()"
+  style="display:none;"
+>
+  💎 Área do Criador
+</button>
+      
        Perfil
     </button>
 
@@ -4714,6 +4804,102 @@ async function iniciar(){
 
 iniciar();
 
+  /* =========================
+   ÁREA DO CRIADOR
+========================= */
+
+function openCreatorArea(){
+
+  if(!currentUser){
+    return;
+  }
+
+  const modal =
+    document.getElementById("creatorAreaModal");
+
+  if(!modal){
+    return;
+  }
+
+  modal.style.display = "flex";
+
+  carregarEstatisticasCriador();
+}
+
+
+function closeCreatorArea(){
+
+  const modal =
+    document.getElementById("creatorAreaModal");
+
+  if(modal){
+    modal.style.display = "none";
+  }
+}
+
+
+async function carregarEstatisticasCriador(){
+
+  if(!currentUser || !supabaseClient){
+    return;
+  }
+
+  const stats =
+    document.getElementById("creatorAreaStats");
+
+  if(!stats){
+    return;
+  }
+
+  const result =
+    await supabaseClient
+      .from("posts")
+      .select("id", {
+        count:"exact",
+        head:true
+      })
+      .eq(
+        "creator_id",
+        currentUser.id
+      );
+
+  if(result.error){
+
+    console.error(
+      "Erro ao carregar estatísticas:",
+      result.error
+    );
+
+    stats.textContent =
+      "Não foi possível carregar.";
+
+    return;
+  }
+
+  stats.textContent =
+    `${result.count || 0} publicação(ões)`;
+}
+
+
+function openCreatePostFromCreatorArea(){
+
+  closeCreatorArea();
+
+  if(typeof openCreatePost === "function"){
+    openCreatePost();
+    return;
+  }
+
+  const createBtn =
+    document.querySelector(
+      '[onclick*="openCreatePost"]'
+    );
+
+  if(createBtn){
+    createBtn.click();
+  }
+    }
+  
 </script>
 
 <!-- PERFIL DO CRIADOR -->
@@ -4770,6 +4956,70 @@ iniciar();
     </div>
 
     <div id="creatorProfilePosts"></div>
+
+  </div>
+
+</div>
+
+  <!-- ÁREA DO CRIADOR -->
+<div
+  id="creatorAreaModal"
+  class="modal"
+  style="display:none;"
+>
+
+  <div class="modal-content creator-area">
+
+    <button
+      class="close"
+      onclick="closeCreatorArea()"
+    >
+      ×
+    </button>
+
+    <h2>💎 Área do Criador</h2>
+
+    <p class="desc">
+      Gere o teu conteúdo e acompanha o teu perfil.
+    </p>
+
+    <div class="creator-area-grid">
+
+      <button
+        class="creator-area-card"
+        onclick="openCreatePostFromCreatorArea()"
+      >
+        <span>➕</span>
+        <strong>Criar publicação</strong>
+        <small>Publica conteúdo para a comunidade.</small>
+      </button>
+
+      <button
+        class="creator-area-card"
+        onclick="openCreatorProfile(currentUser.id); closeCreatorArea();"
+      >
+        <span>👤</span>
+        <strong>Meu perfil</strong>
+        <small>Ver o teu perfil público.</small>
+      </button>
+
+      <div class="creator-area-card">
+        <span>📊</span>
+        <strong>Estatísticas</strong>
+        <small id="creatorAreaStats">
+          A carregar...
+        </small>
+      </div>
+
+      <div class="creator-area-card">
+        <span>🔒</span>
+        <strong>Conteúdo Premium</strong>
+        <small>
+          Em breve poderás gerir conteúdo Premium.
+        </small>
+      </div>
+
+    </div>
 
   </div>
 

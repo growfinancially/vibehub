@@ -1248,9 +1248,19 @@ footer{
   }
 
   /* esconder botões de texto do topo */
-  .nav .btn{
-    display:none !important;
-  }
+  .nav #notificationsBtn{
+  display:grid !important;
+  width:42px;
+  height:42px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  place-items:center;
+  font-size:22px;
+  border-radius:50%;
+  box-shadow:none;
+}
 
   .user-area{
     display:flex;
@@ -5533,7 +5543,7 @@ function openCreatePostFromCreatorArea(){
   <button
   class="vibe-bottom-item"
   type="button"
-  onclick="document.getElementById('chatModal')?.classList.add('show')"
+  onclick="openChat()"
 >
   <span class="nav-icon">◯</span>
   <span>Mensagens</span>

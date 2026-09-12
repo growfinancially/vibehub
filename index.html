@@ -1205,6 +1205,330 @@ footer{
     right:10px;
   }
 }
+
+/* =========================================
+   VIBEHUB — NOVO VISUAL MOBILE
+   ========================================= */
+
+@media (max-width:560px){
+
+  /* ---------- CABEÇALHO ---------- */
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(11,13,16,.94);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(255,255,255,.06);
+    box-shadow:none;
+  }
+
+  .nav{
+    width:100%;
+    max-width:none;
+    min-height:72px;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .logo{
+    font-size:27px;
+    font-weight:900;
+    letter-spacing:-1.5px;
+    margin-right:auto;
+  }
+
+  /* esconder pesquisa antiga do topo */
+  .nav .search{
+    display:none !important;
+  }
+
+  /* esconder botões de texto do topo */
+  .nav .btn{
+    display:none !important;
+  }
+
+  .user-area{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-left:auto;
+  }
+
+  /* botão de perfil no topo vira apenas avatar */
+  .user-profile-btn{
+    width:46px;
+    height:46px;
+    padding:0;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.08);
+    background:linear-gradient(
+      135deg,
+      #7c5cff,
+      #21d4fd
+    );
+    color:white;
+    font-size:0;
+    display:grid;
+    place-items:center;
+    box-shadow:0 6px 18px rgba(124,92,255,.22);
+  }
+
+  .user-profile-btn::before{
+    content:"👤";
+    font-size:21px;
+  }
+
+  /* ---------- NOTIFICAÇÕES ---------- */
+
+  .notification-btn{
+    width:42px;
+    height:42px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    display:grid;
+    place-items:center;
+    font-size:22px;
+    cursor:pointer;
+  }
+
+  /* ---------- CONTEÚDO ---------- */
+
+  main{
+    width:100%;
+    max-width:none;
+    padding:28px 16px 105px;
+  }
+
+  .hero{
+    padding:26px 0 22px;
+  }
+
+  .hero h1{
+    font-size:38px;
+    line-height:1.02;
+    letter-spacing:-1.8px;
+  }
+
+  .hero p{
+    font-size:16px;
+    line-height:1.5;
+    margin-top:14px;
+  }
+
+  .tabs{
+    display:flex;
+    gap:10px;
+    margin:22px 0 30px;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+
+  .tabs::-webkit-scrollbar{
+    display:none;
+  }
+
+  .tab{
+    flex:0 0 auto;
+    padding:11px 19px;
+    border-radius:24px;
+    white-space:nowrap;
+  }
+
+  .section-title{
+    font-size:24px;
+    margin-bottom:16px;
+  }
+
+  /* ---------- PUBLICAÇÕES ---------- */
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  .card{
+    width:100%;
+    border-radius:18px;
+    box-shadow:0 8px 28px rgba(0,0,0,.20);
+  }
+
+  .media{
+    width:100%;
+    height:245px;
+  }
+
+  .badge{
+    right:12px;
+    top:12px;
+    padding:9px 12px;
+    border-radius:12px;
+    font-size:12px;
+    font-weight:800;
+  }
+
+  .body{
+    padding:15px;
+  }
+
+  .creator{
+    gap:10px;
+  }
+
+  .avatar{
+    width:42px;
+    height:42px;
+    min-width:42px;
+  }
+
+  .title{
+    font-size:17px;
+    margin:13px 0 5px;
+  }
+
+  .desc{
+    font-size:14px;
+  }
+
+  /* Gostar com a cor principal do VibeHub */
+  .actions button.liked{
+    color:var(--accent);
+    background:rgba(124,92,255,.12);
+  }
+
+  /* ---------- BARRA INFERIOR ---------- */
+
+  .vibe-bottom-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:2000;
+
+    height:76px;
+
+    display:grid;
+    grid-template-columns:
+      1fr
+      1fr
+      1fr
+      1fr;
+
+    align-items:center;
+
+    background:rgba(11,13,16,.96);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    padding:
+      7px
+      10px
+      calc(7px + env(safe-area-inset-bottom))
+      10px;
+
+    box-shadow:
+      0 -10px 30px rgba(0,0,0,.22);
+  }
+
+  .vibe-bottom-item{
+    height:62px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    gap:4px;
+
+    border:0;
+    background:transparent;
+
+    color:#969ca7;
+
+    font-size:11px;
+    font-weight:700;
+
+    cursor:pointer;
+    transition:.2s ease;
+  }
+
+  .vibe-bottom-item .nav-icon{
+  width:26px;
+  height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  line-height:1;
+  font-weight:400;
+}
+
+.vibe-bottom-item.active .nav-icon{
+  color:var(--accent);
+  filter:drop-shadow(0 3px 8px rgba(124,92,255,.35));
+  }
+
+  .vibe-bottom-item.active{
+    color:var(--accent);
+  }
+
+  .vibe-bottom-item:active{
+    transform:scale(.94);
+  }
+
+  /* botão central Criar */
+  .vibe-create-button{
+    width:58px;
+    height:58px;
+
+    margin-top:-25px;
+
+    border-radius:50%;
+    border:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:var(--accent);
+    color:white;
+
+    font-size:34px;
+    font-weight:300;
+
+    box-shadow:
+      0 8px 25px rgba(124,92,255,.38);
+
+    cursor:pointer;
+  }
+
+  .vibe-create-button:active{
+    transform:scale(.94);
+  }
+
+  /* ---------- ESCONDER PERFIL DA BARRA ---------- */
+
+  .vibe-bottom-profile{
+    display:none !important;
+  }
+
+  /* ---------- ESPAÇO PARA A BARRA ---------- */
+
+  footer{
+    padding-bottom:100px;
+  }
+
+}
   
 </style>
 </head>
@@ -5175,6 +5499,47 @@ function openCreatePostFromCreatorArea(){
   </div>
 
 </div>
+
+  <!-- VIBEHUB MOBILE BOTTOM NAV -->
+<nav class="vibe-bottom-nav">
+
+  <button
+    class="vibe-bottom-item active"
+    type="button"
+    onclick="window.scrollTo({top:0,behavior:'smooth'})"
+  >
+    <span class="nav-icon">⌂</span>
+    <span>Início</span>
+  </button>
+
+  <button
+    class="vibe-bottom-item"
+    type="button"
+    onclick="openExplore()"
+  >
+    <span class="nav-icon">⌕</span>
+    <span>Explorar</span>
+  </button>
+
+  <button
+    class="vibe-bottom-item vibe-create-button"
+    type="button"
+    onclick="openModal('creator')"
+    aria-label="Criar publicação"
+  >
+    +
+  </button>
+
+  <button
+  class="vibe-bottom-item"
+  type="button"
+  onclick="document.getElementById('chatModal')?.classList.add('show')"
+>
+  <span class="nav-icon">◯</span>
+  <span>Mensagens</span>
+</button>
+
+</nav>
   
 </body>
 </html>

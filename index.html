@@ -556,51 +556,197 @@ footer{
    PERFIL DO CRIADOR
 ========================= */
 
-.creator-profile{
-  width:min(720px, 94vw);
-  max-height:90vh;
+#creatorProfileModal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+
   overflow-y:auto;
 }
+
+
+/* =========================
+   PAINEL DO PERFIL
+========================= */
+
+.creator-profile{
+  position:relative;
+
+  width:min(720px, 94vw);
+  max-height:90vh;
+
+  overflow-y:auto;
+
+  padding:28px;
+
+  background:#15181d;
+  border:1px solid #292e36;
+  border-radius:22px;
+
+  box-shadow:
+    0 25px 80px rgba(0,0,0,.65);
+
+  color:var(--text);
+}
+
+
+/* =========================
+   BOTÃO FECHAR
+========================= */
+
+.creator-profile .close{
+  position:absolute;
+
+  top:14px;
+  right:16px;
+
+  width:38px;
+  height:38px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:0;
+
+  border:0;
+  border-radius:50%;
+
+  background:#1b1f25;
+  color:#f5f5f7;
+
+  font-size:26px;
+  line-height:1;
+
+  cursor:pointer;
+
+  transition:
+    background .2s,
+    transform .2s;
+}
+
+.creator-profile .close:hover{
+  background:#292e36;
+  transform:scale(1.05);
+}
+
+
+/* =========================
+   CABEÇALHO
+========================= */
 
 .creator-profile-header{
   display:flex;
   align-items:center;
+
   gap:18px;
-  padding:10px 0 20px;
+
+  padding:5px 45px 24px 5px;
 }
 
+
+/* =========================
+   AVATAR
+========================= */
+
 .creator-profile-avatar{
-  width:80px;
-  height:80px;
-  min-width:80px;
-  border-radius:50%;
-  background:var(--accent);
+  width:88px;
+  height:88px;
+
+  min-width:88px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  border-radius:50%;
+
+  background:var(--accent);
+
+  border:3px solid rgba(255,255,255,.08);
+
   overflow:hidden;
-  font-size:32px;
+
+  font-size:34px;
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.3);
 }
 
 .creator-profile-avatar img{
   width:100%;
   height:100%;
+
   object-fit:cover;
+
+  display:block;
+}
+
+
+/* =========================
+   INFORMAÇÕES
+========================= */
+
+.creator-profile-info{
+  min-width:0;
 }
 
 .creator-profile-info h2{
-  margin:0 0 5px;
+  margin:0 0 4px;
+
+  font-size:25px;
+  font-weight:700;
+
+  color:var(--text);
+
+  word-break:break-word;
 }
 
 .creator-profile-info p{
-  margin:4px 0;
+  margin:5px 0;
+
   color:var(--muted);
+
+  line-height:1.45;
+
+  word-break:break-word;
 }
+
+#creatorProfileUsername{
+  font-size:14px;
+}
+
+#creatorProfileBio{
+  margin-top:9px;
+
+  color:#c5c9d0;
+
+  font-size:14px;
+}
+
+
+/* =========================
+   ESTATÍSTICAS
+========================= */
 
 .creator-profile-stats{
   display:flex;
-  gap:35px;
-  padding:15px 0;
+  align-items:center;
+
+  gap:50px;
+
+  padding:18px 5px;
+
   border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
 }
@@ -608,20 +754,170 @@ footer{
 .creator-profile-stats div{
   display:flex;
   flex-direction:column;
+
   gap:3px;
 }
 
 .creator-profile-stats strong{
-  font-size:20px;
+  font-size:21px;
+  font-weight:700;
+
+  color:var(--text);
 }
 
 .creator-profile-stats span{
   color:var(--muted);
+
   font-size:13px;
 }
 
+
+/* =========================
+   PUBLICAÇÕES
+========================= */
+
 #creatorProfilePosts{
   margin-top:20px;
+}
+
+#creatorProfilePosts > div{
+  transition:background .2s;
+}
+
+#creatorProfilePosts > div:hover{
+  background:rgba(255,255,255,.02);
+}
+
+
+/* Título da publicação */
+
+#creatorProfilePosts strong{
+  display:block;
+
+  color:var(--text);
+
+  font-size:16px;
+  line-height:1.4;
+
+  word-break:break-word;
+}
+
+
+/* Descrição */
+
+#creatorProfilePosts .desc{
+  color:var(--muted);
+
+  font-size:14px;
+  line-height:1.5;
+
+  word-break:break-word;
+}
+
+
+/* =========================
+   PREMIUM
+========================= */
+
+#creatorProfilePosts .premium{
+  display:inline-flex;
+  align-items:center;
+
+  width:auto;
+
+  padding:9px 13px;
+
+  border-radius:10px;
+
+  background:rgba(124,92,255,.12);
+
+  border:1px solid rgba(124,92,255,.35);
+
+  color:#c9bfff;
+
+  font-size:13px;
+  font-weight:600;
+}
+
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.creator-profile::-webkit-scrollbar{
+  width:7px;
+}
+
+.creator-profile::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+.creator-profile::-webkit-scrollbar-thumb{
+  background:#343943;
+  border-radius:10px;
+}
+
+.creator-profile::-webkit-scrollbar-thumb:hover{
+  background:#464c58;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+  #creatorProfileModal{
+    align-items:flex-start;
+
+    padding:12px;
+  }
+
+  .creator-profile{
+    width:100%;
+    max-height:94vh;
+
+    padding:22px 18px;
+
+    border-radius:18px;
+  }
+
+  .creator-profile-header{
+    gap:14px;
+
+    padding-right:38px;
+  }
+
+  .creator-profile-avatar{
+    width:70px;
+    height:70px;
+
+    min-width:70px;
+
+    font-size:27px;
+  }
+
+  .creator-profile-info h2{
+    font-size:21px;
+  }
+
+  #creatorProfileBio{
+    font-size:13px;
+  }
+
+  .creator-profile-stats{
+    gap:35px;
+  }
+
+  .creator-profile-stats strong{
+    font-size:19px;
+  }
+
+  .creator-profile .close{
+    top:10px;
+    right:10px;
+  }
 }
   
 </style>

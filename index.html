@@ -1852,6 +1852,150 @@ footer{
   }
 
     }
+
+/* ================================
+   VIBEHUB — EXPLORAR MOBILE
+================================ */
+
+@media(max-width:560px){
+
+  #explorePanel{
+    position:fixed;
+    inset:0;
+    z-index:3000;
+    background:var(--bg);
+    overflow-y:auto;
+    padding:18px 16px 100px;
+    box-sizing:border-box;
+    display:none;
+  }
+
+  #explorePanel.show{
+    display:block;
+  }
+
+  .explore-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+  }
+
+  .explore-back{
+    width:42px;
+    height:42px;
+    flex:none;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    background:rgba(255,255,255,.05);
+    color:var(--text);
+    font-size:25px;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+  }
+
+  .explore-header-title{
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:-.7px;
+  }
+
+  .explore-search-wrap{
+    position:relative;
+    margin-bottom:24px;
+  }
+
+  #exploreSearch{
+    width:100%;
+    height:52px;
+    padding:0 16px 0 48px;
+    box-sizing:border-box;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:15px;
+    outline:none;
+    background:#15181d;
+    color:var(--text);
+    font-size:15px;
+    transition:.2s ease;
+  }
+
+  #exploreSearch::placeholder{
+    color:var(--muted);
+  }
+
+  #exploreSearch:focus{
+    border-color:rgba(124,92,255,.6);
+    background:#181b21;
+    box-shadow:0 0 0 3px rgba(124,92,255,.10);
+  }
+
+  .explore-search-wrap::before{
+    content:"⌕";
+    position:absolute;
+    left:17px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:24px;
+    color:var(--muted);
+    pointer-events:none;
+    z-index:2;
+  }
+
+  .explore-results-title{
+    font-size:18px;
+    font-weight:800;
+    margin:0 0 14px;
+    color:var(--text);
+  }
+
+  #exploreResults .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  #exploreResults .card{
+    width:100%;
+    border-radius:18px;
+  }
+
+  .explore-empty{
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px 20px;
+    box-sizing:border-box;
+  }
+
+  .explore-empty-icon{
+    width:68px;
+    height:68px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:rgba(124,92,255,.10);
+    color:var(--accent);
+    font-size:34px;
+    margin-bottom:18px;
+  }
+
+  .explore-empty strong{
+    font-size:18px;
+    margin-bottom:8px;
+  }
+
+  .explore-empty span{
+    max-width:290px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+  }
+
+}
   
 </style>
 </head>

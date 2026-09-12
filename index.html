@@ -76,38 +76,65 @@ header{
 }
 
 .search{
-  width:220px;
-  padding:9px 13px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:var(--card);
-  color:white;
-  outline:none
+  width:240px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  outline:none;
+  transition:.2s ease;
+  box-sizing:border-box;
+}
+
+.search::placeholder{
+  color:var(--muted);
+}
+
+.search:focus{
+  border-color:rgba(124,92,255,.6);
+  background:rgba(255,255,255,.06);
+  box-shadow:0 0 0 3px rgba(124,92,255,.10);
 }
 
 .btn{
-  border:0;
-  border-radius:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:11px;
   padding:9px 13px;
-  background:var(--card2);
-  color:white;
-  font-weight:750;
+  background:rgba(255,255,255,.045);
+  color:var(--text);
+  font-weight:700;
   white-space:nowrap;
-  cursor:pointer
+  cursor:pointer;
+  transition:.2s ease;
 }
 
 .btn:hover{
-  filter:brightness(1.12)
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.12);
+  transform:translateY(-1px);
 }
 
 .primary{
-  background:var(--accent)
+  background:var(--accent);
+  color:white;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 4px 14px rgba(124,92,255,.18);
+  transition:.2s ease;
 }
 
+.primary:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(124,92,255,.25);
+}
+  
 main{
+  width:100%;
   max-width:1150px;
   margin:auto;
-  padding:32px 18px 70px
+  padding:38px 18px 80px;
+  box-sizing:border-box;
 }
 
 .hero{

@@ -990,15 +990,6 @@ footer{
   Perfil
 </button>
 
-<button
-  id="creatorAreaBtn"
-  class="btn"
-  onclick="openCreatorArea()"
-  style="display:none;"
->
-  💎 Área do Criador
-</button>
-
     <button
       class="logout-btn"
       onclick="logout()"
@@ -4889,70 +4880,6 @@ function openCreatePostFromCreatorArea(){
     </div>
 
     <div id="creatorProfilePosts"></div>
-
-  </div>
-
-</div>
-
-  <!-- ÁREA DO CRIADOR -->
-<div
-  id="creatorAreaModal"
-  class="modal"
-  style="display:none;"
->
-
-  <div class="modal-content creator-area">
-
-    <button
-      class="close"
-      onclick="closeCreatorArea()"
-    >
-      ×
-    </button>
-
-    <h2>💎 Área do Criador</h2>
-
-    <p class="desc">
-      Gere o teu conteúdo e acompanha o teu perfil.
-    </p>
-
-    <div class="creator-area-grid">
-
-      <button
-        class="creator-area-card"
-        onclick="openCreatePostFromCreatorArea()"
-      >
-        <span>➕</span>
-        <strong>Criar publicação</strong>
-        <small>Publica conteúdo para a comunidade.</small>
-      </button>
-
-      <button
-        class="creator-area-card"
-        onclick="openCreatorProfile(currentUser.id); closeCreatorArea();"
-      >
-        <span>👤</span>
-        <strong>Meu perfil</strong>
-        <small>Ver o teu perfil público.</small>
-      </button>
-
-      <div class="creator-area-card">
-        <span>📊</span>
-        <strong>Estatísticas</strong>
-        <small id="creatorAreaStats">
-          A carregar...
-        </small>
-      </div>
-
-      <div class="creator-area-card">
-        <span>🔒</span>
-        <strong>Conteúdo Premium</strong>
-        <small>
-          Em breve poderás gerir conteúdo Premium.
-        </small>
-      </div>
-
-    </div>
 
   </div>
 

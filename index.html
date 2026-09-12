@@ -1154,8 +1154,10 @@ async function carregarMensagens(receiverId){
     .eq("sender_id", receiverId)
     .eq("receiver_id", currentUser.id)
     .eq("is_read", false);
+  
+  await carregarMensagensNaoLidas();
+  
 }
-
 
 async function sendMessage(receiverId){
 
@@ -1196,9 +1198,49 @@ async function sendMessage(receiverId){
 
   input.value = "";
 
-  await carregarMensagens(receiverId);
-}
+await carregarMensagens(receiverId);
+await carregarMensagensNaoLidas();
   
+  
+/* =================================
+   MENSAGENS NÃO LIDAS
+================================= */
+
+async function carregarMensagensNaoLidas(){
+
+  if(!currentUser || !supabaseClient){
+    return;
+  }
+
+  const result =
+    await supabaseClient
+      .from("messages")
+      .select("id", { count:"exact", head:true })
+      .eq("receiver_id", currentUser.id)
+      .eq("is_read", false);
+
+  if(result.error){
+    console.error(
+      "Erro ao contar mensagens:",
+      result.error
+    );
+    return;
+  }
+
+  const total =
+    result.count || 0;
+
+  const chatBtn =
+    document.getElementById("chatBtn");
+
+  if(chatBtn){
+
+    chatBtn.textContent =
+      total > 0
+        ? `💬 Chat (${total})`
+        : "💬 Chat";
+   }
+  }
   
   /* =================================
    NOTIFICAÇÕES
@@ -2260,7 +2302,9 @@ const chatBtn =
 if(chatBtn){
   chatBtn.style.display = "block";
 }
-
+  
+carregarMensagensNaoLidas();
+  
 carregarNotificacoes();
 
 }

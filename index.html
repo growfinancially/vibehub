@@ -376,11 +376,12 @@ main{
   width:32px;
   height:32px;
   padding:0;
+  margin:0;
 
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.12);
+  border:0;
+  border-radius:0;
+  background:transparent;
 
-  background:#1b1f25;
   color:#969ca7;
 
   display:grid;
@@ -389,6 +390,15 @@ main{
   cursor:pointer;
   box-shadow:none;
   transition:.2s ease;
+}
+
+.user-profile-btn:hover{
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+}
+
+.user-profile-btn:active{
+  transform:scale(.94);
 }
 
 .user-profile-btn:hover{

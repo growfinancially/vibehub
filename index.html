@@ -217,7 +217,7 @@ main{
 .post-card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:22px;
+  border-radius:18px;
   overflow:hidden;
   padding:0;
 }
@@ -236,36 +236,22 @@ main{
 .post-media video{
   display:block;
   width:100%;
-  height:280px;
+  height:230px;
   object-fit:cover;
 }
 
 /* ÁREA DE INFORMAÇÃO */
 .post-content{
-  padding:0 18px 17px;
+  padding:0 15px 14px;
 }
 
 /* CRIADOR */
 .post-head{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   margin:0;
-  padding:14px 0 13px;
-}
-
-.avatar{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#292e36,#20242b);
-  border:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  flex:none;
-  font-weight:900;
+  padding:11px 0 10px;
 }
 
 .avatar img{
@@ -1026,6 +1012,32 @@ function render(){
 
   feed.innerHTML=list.map(renderPost).join("");
 }
+
+  async function sharePost(postId){
+  const shareUrl = window.location.origin + window.location.pathname + "?post=" + encodeURIComponent(postId);
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: "VibeHub",
+        text: "Vê esta publicação no VibeHub",
+        url: shareUrl
+      });
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link da publicação copiado!");
+    }
+  } catch(error) {
+    if (error.name !== "AbortError") {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Link da publicação copiado!");
+      } catch(e) {
+        alert("Não foi possível partilhar esta publicação.");
+      }
+    }
+  }
+  }
 
 function renderPost(post){
   const avatar=post.avatar_url

@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="pt-PT" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google" content="notranslate">
+<title>VibeHub</title>
+
+<style>
+:root{
+  --bg:#0b0d10;
+  --card:#15181d;
+  --card2:#1b1f25;
+  --text:#f5f5f7;
+  --muted:#969ca7;
+  --accent:#7c5cff;
+  --accent2:#987fff;
+  --border:#292e36;
+  --danger:#ff5d6c;
+  --success:#43d18a;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+a{color:inherit;text-decoration:none}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(11,13,16,.88);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(41,46,54,.75);
+}
+
+.nav{
+  max-width:1150px;
+  height:68px;
+  margin:auto;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:-1px;
+  margin-right:auto;
+}
+.logo span{color:var(--accent)}
+
+.search{
+  width:min(290px,32vw);
+  height:40px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  background:#111419;
+  color:var(--text);
+  padding:0 14px;
+}
+.search:focus{border-color:var(--accent)}
+
+.header-icon{
+  width:38px;
+  height:38px;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:11px;
+  background:transparent;
+  color:#c8cbd2;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.header-icon:hover{
+  background:var(--card2);
+  border-color:var(--border);
+  color:#fff;
+}
+
+.header-icon svg{
+  width:19px;
+  height:19px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.notification-dot{
+  display:none;
+  position:absolute;
+  width:7px;
+  height:7px;
+  right:7px;
+  top:7px;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 2px var(--bg);
+}
+
+.user-area{
+  display:none;
+  align-items:center;
+  gap:8px;
+}
+
+.user-profile-btn{
+  width:38px;
+  height:38px;
+  border:1px solid transparent;
+  border-radius:11px;
+  background:transparent;
+  color:#c8cbd2;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.user-profile-btn:hover{
+  background:var(--card2);
+  border-color:var(--border);
+  color:#fff;
+}
+.user-profile-btn svg{
+  width:19px;
+  height:19px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.auth-buttons{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.btn{
+  border:1px solid var(--border);
+  background:var(--card2);
+  color:var(--text);
+  border-radius:10px;
+  padding:9px 13px;
+  font-weight:700;
+}
+.btn:hover{border-color:#3c4350;background:#20242b}
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:white;
+}
+.btn.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.ghost{background:transparent}
+
+main{
+  width:min(100%,1150px);
+  margin:auto;
+  padding:30px 18px 90px;
+}
+
+.hero{
+  padding:32px 0 22px;
+}
+.hero h1{
+  margin:0 0 9px;
+  font-size:clamp(30px,5vw,48px);
+  letter-spacing:-2px;
+}
+.hero p{
+  margin:0;
+  color:var(--muted);
+  max-width:680px;
+  line-height:1.6;
+}
+
+.tabs{
+  display:flex;
+  gap:7px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:20px;
+  overflow:auto;
+}
+.tab{
+  flex:none;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  padding:12px 14px;
+  font-weight:800;
+  border-bottom:2px solid transparent;
+}
+.tab:hover{color:var(--text)}
+.tab.active{
+  color:#fff;
+  border-bottom-color:var(--accent);
+}
+
+.feed{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:16px;
+  max-width:800px;
+}
+
+.post-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:22px;
+  overflow:hidden;
+}
+
+.post-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#292e36,#20242b);
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  flex:none;
+  font-weight:900;
+}
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.creator-meta{min-width:0}
+.creator-name{
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.creator-handle{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:2px;
+}
+
+.post-title{
+  margin:0 0 10px;
+  font-size:20px;
+  letter-spacing:-.4px;
+}
+.post-description{
+  margin:0;
+  color:#b6bbc4;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+
+.post-media{
+  margin-top:17px;
+  border-radius:13px;
+  overflow:hidden;
+  background:#0d0f13;
+  border:1px solid var(--border);
+}
+.post-media img,.post-media video{
+  display:block;
+  width:100%;
+  max-height:520px;
+  object-fit:cover;
+}
+
+.exclusive-box{
+  margin-top:17px;
+  padding:18px;
+  border:1px solid var(--border);
+  background:#111419;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+}
+.exclusive-box strong{display:block;margin-bottom:4px}
+.exclusive-box span{font-size:13px;color:var(--muted)}
+
+.actions{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:17px;
+  flex-wrap:wrap;
+}
+.actions button{
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--muted);
+  border-radius:9px;
+  padding:8px 10px;
+  font-weight:700;
+}
+.actions button:hover{
+  color:#fff;
+  background:var(--card2);
+  border-color:var(--border);
+}
+.actions button.liked{color:#b7a8ff}
+.like-count{margin-left:3px}
+
+.empty{
+  padding:45px 20px;
+  text-align:center;
+  border:1px dashed var(--border);
+  border-radius:16px;
+  color:var(--muted);
+}
+
+.creator-box{
+  margin-top:20px;
+  max-width:800px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+}
+.creator-box h3{margin:0 0 5px}
+.creator-box p{margin:0;color:var(--muted);line-height:1.5}
+
+.explore-panel{
+  display:none;
+  max-width:900px;
+}
+.explore-panel.show{display:block}
+
+.explore-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.creator-card{
+  border:1px solid var(--border);
+  background:var(--card);
+  border-radius:15px;
+  padding:17px;
+  cursor:pointer;
+}
+.creator-card:hover{border-color:#3b414c}
+.creator-card-top{display:flex;gap:11px;align-items:center}
+.creator-card p{
+  color:var(--muted);
+  font-size:13px;
+  margin:12px 0 0;
+  line-height:1.45;
+}
+
+.chat-panel{
+  display:none;
+  max-width:800px;
+}
+.chat-panel.show{display:block}
+.chat-box{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+}
+.chat-head{
+  padding:16px 18px;
+  border-bottom:1px solid var(--border);
+  font-weight:800;
+}
+.chat-messages{
+  height:330px;
+  overflow:auto;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+.message{
+  max-width:78%;
+  padding:10px 12px;
+  border-radius:12px;
+  background:var(--card2);
+  color:#d8dbe1;
+  align-self:flex-start;
+}
+.message.me{
+  align-self:flex-end;
+  background:#2a2250;
+}
+.chat-form{
+  display:flex;
+  gap:8px;
+  padding:12px;
+  border-top:1px solid var(--border);
+}
+.chat-form input{
+  flex:1;
+  min-width:0;
+  height:42px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#101216;
+  color:#fff;
+  padding:0 12px;
+  outline:none;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.68);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.modal.show{display:flex}
+.modal-card{
+  width:min(100%,520px);
+  max-height:90vh;
+  overflow:auto;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:21px;
+  box-shadow:0 20px 70px rgba(0,0,0,.45);
+}
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.modal-head h2{margin:0;font-size:21px}
+.close{
+  width:34px;
+  height:34px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--muted);
+  border-radius:9px;
+}
+.close:hover{color:#fff;background:var(--card2)}
+
+.form-group{margin-bottom:13px}
+.form-group label{
+  display:block;
+  margin-bottom:6px;
+  color:#cfd2d8;
+  font-size:13px;
+  font-weight:700;
+}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;
+  border:1px solid var(--border);
+  background:#101216;
+  color:#fff;
+  border-radius:10px;
+  padding:11px 12px;
+  outline:none;
+}
+.form-group textarea{min-height:105px;resize:vertical}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent)}
+
+.form-actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:17px;
+}
+
+.msg{
+  min-height:20px;
+  color:var(--muted);
+  font-size:13px;
+  margin-top:9px;
+}
+.msg.error{color:#ff8c97}
+.msg.success{color:var(--success)}
+
+.profile-info{
+  text-align:center;
+  padding:5px 0 18px;
+}
+.profile-big-avatar{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  margin:0 auto 11px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  font-size:25px;
+  font-weight:900;
+}
+.profile-big-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-info h3{margin:0 0 4px}
+.profile-info p{margin:0;color:var(--muted);font-size:14px}
+
+.profile-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:13px 0;
+}
+.stat{
+  border:1px solid var(--border);
+  background:#111419;
+  border-radius:11px;
+  padding:11px 5px;
+  text-align:center;
+}
+.stat strong{display:block}
+.stat span{font-size:11px;color:var(--muted)}
+
+.profile-menu{
+  display:grid;
+  gap:8px;
+}
+.profile-menu button{width:100%;text-align:left}
+.logout-btn{color:#ff8c97!important}
+
+.creator-profile-head{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+.creator-profile-head .avatar{width:58px;height:58px}
+.creator-profile-head h3{margin:0 0 3px}
+.creator-profile-head p{margin:0;color:var(--muted);font-size:13px}
+.creator-profile-description{
+  color:#b6bbc4;
+  line-height:1.55;
+  margin:17px 0;
+}
+
+.vibe-bottom-nav{display:none}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%) translateY(15px);
+  z-index:200;
+  background:#1c2027;
+  border:1px solid var(--border);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:11px;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s ease;
+  font-size:13px;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:720px){
+  header{position:sticky}
+  .nav{
+    height:62px;
+    padding:0 12px;
+    gap:5px;
+  }
+  .logo{font-size:21px}
+  .search{display:none}
+  .auth-buttons{gap:4px}
+  .auth-buttons .btn{
+    padding:8px 9px;
+    font-size:12px;
+  }
+  .header-icon{
+    display:flex;
+    width:36px;
+    height:36px;
+  }
+  .user-area{display:none}
+  main{padding:20px 12px 84px}
+  .hero{padding:22px 0 18px}
+  .hero h1{font-size:31px;letter-spacing:-1.4px}
+  .post-card{padding:19px 16px;border-radius:15px}
+  .post-head{margin-bottom:16px}
+  .exclusive-box{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .exclusive-box .btn{width:100%}
+  .explore-grid{grid-template-columns:1fr}
+  .vibe-bottom-nav{
+    position:fixed;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:60;
+    height:62px;
+    background:rgba(14,16,20,.96);
+    border-top:1px solid var(--border);
+    backdrop-filter:blur(15px);
+  }
+  .vibe-bottom-nav button{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    font-size:11px;
+    font-weight:700;
+  }
+  .vibe-bottom-nav button.active{color:#fff}
+  .vibe-bottom-nav svg{
+    display:block;
+    width:19px;
+    height:19px;
+    margin:0 auto 3px;
+    stroke:currentColor;
+    fill:none;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Vibe<span>Hub</span></div>
+
+    <input id="search" class="search" type="search" placeholder="Pesquisar..." oninput="render()">
+
+    <button id="chatBtn" class="header-icon" type="button" title="Chat" onclick="showChat()" style="display:none" aria-label="Chat">
+      <svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.6-.8L4 20l1.2-3.8A7.2 7.2 0 0 1 4 11.5 7.5 7.5 0 0 1 12 4a7.5 7.5 0 0 1 8 7.5Z"/></svg>
+    </button>
+
+    <button id="notificationsBtn" class="header-icon" type="button" title="Notificações" onclick="openNotifications()" style="display:none" aria-label="Notificações">
+      <svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+      <span id="notificationCount" class="notification-dot"></span>
+    </button>
+
+    <div id="authButtons" class="auth-buttons">
+      <button class="btn ghost" type="button" onclick="openModal('login')">Entrar</button>
+      <button class="btn primary" type="button" onclick="openModal('signup')">Criar conta</button>
+    </div>
+
+    <div id="userArea" class="user-area">
+      <button id="userProfileBtn" class="user-profile-btn" type="button" onclick="openModal('profile')" title="Perfil" aria-label="Perfil">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Descobre. Publica. Conecta.</h1>
+    <p>Um espaço para criadores partilharem publicações e conteúdos exclusivos com a sua comunidade.</p>
+  </section>
+
+  <div class="tabs">
+    <button id="tabAll" class="tab active" onclick="setTab('all')">Para ti</button>
+    <button id="tabFollowing" class="tab" onclick="setTab('following')">A seguir</button>
+    <button id="tabPopular" class="tab" onclick="setTab('popular')">Popular</button>
+  </div>
+
+  <section id="feed" class="feed"></section>
+
+  <section id="explorePanel" class="explore-panel">
+    <div class="hero" style="padding-top:5px">
+      <h2 style="margin:0 0 7px">Explorar</h2>
+      <p>Encontra criadores e descobre novas publicações.</p>
+    </div>
+    <div id="exploreGrid" class="explore-grid"></div>
+  </section>
+
+  <section id="chatPanel" class="chat-panel">
+    <div class="hero" style="padding-top:5px">
+      <h2 style="margin:0 0 7px">Chat</h2>
+      <p>As tuas conversas aparecem aqui.</p>
+    </div>
+    <div class="chat-box">
+      <div class="chat-head">Mensagens</div>
+      <div id="chatMessages" class="chat-messages">
+        <div class="empty">Ainda não tens mensagens.</div>
+      </div>
+      <form class="chat-form" onsubmit="sendChat(event)">
+        <input id="chatInput" placeholder="Escreve uma mensagem..." autocomplete="off">
+        <button class="btn primary" type="submit">Enviar</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="creatorBox" class="creator-box">
+    <h3>VibeHub</h3>
+    <p>Publicações, criadores e conteúdos num só lugar.</p>
+  </div>
+</main>
+
+<nav class="vibe-bottom-nav">
+  <button id="bottomHome" class="active" onclick="showHome()">
+    <svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/></svg>
+    Início
+  </button>
+  <button id="bottomExplore" onclick="showExplore()">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/><path d="m13.5 8.5-2 4-4 2 4-2 2-4Z"/></svg>
+    Explorar
+  </button>
+  <button onclick="openCreatePost()">
+    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    Criar
+  </button>
+  <button id="bottomChat" onclick="showChat()" style="display:none">
+    <svg viewBox="0 0 24 24"><path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.7 8.7 0 0 1-3.6-.8L4 20l1.2-3.8A7.2 7.2 0 0 1 4 11.5 7.5 7.5 0 0 1 12 4a7.5 7.5 0 0 1 8 7.5Z"/></svg>
+    Chat
+  </button>
+</nav>
+
+<div id="modal" class="modal" onclick="modalBackdrop(event)">
+  <div id="modalCard" class="modal-card"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/*
+  ============================================================
+  VIBEHUB — VERSÃO CORRIGIDA
+  ============================================================
+  IMPORTANTE:
+  1. Mantém a tua URL do Supabase.
+  2. No campo SUPABASE_KEY, coloca a tua Publishable/Anon Key.
+  3. NÃO coloques aqui uma service_role key.
+*/
+
+const SUPABASE_URL = "https://kcgiwqgjyjklguybmtgp.supabase.co";
+const SUPABASE_KEY = "COLOCA_A_TUA_PUBLISHABLE_KEY_AQUI";
+
+let supabaseClient = null;
+let currentUser = null;
+let currentProfile = null;
+let posts = [];
+let creators = [];
+let current = "all";
+let toastTimer = null;
+
+try{
+  if(window.supabase && SUPABASE_KEY && !SUPABASE_KEY.includes("COLOCA_A_TUA")){
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("Supabase conectado!");
+  }else{
+    console.warn("Coloca a Publishable/Anon Key do Supabase no código.");
+  }
+}catch(error){
+  console.error("Erro ao ligar ao Supabase:", error);
+}
+
+window.addEventListener("DOMContentLoaded", async ()=>{
+  bindModalEscape();
+  await verificarSessao();
+  await carregarPosts();
+  await carregarCriadores();
+  render();
+});
+
+function bindModalEscape(){
+  document.addEventListener("keydown",(e)=>{
+    if(e.key==="Escape") closeModal();
+  });
+}
+
+function showToast(text){
+  const el=document.getElementById("toast");
+  if(!el)return;
+  el.textContent=text;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+
+function esc(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function initials(name){
+  const text=(name||"V").trim();
+  return text.split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase() || "V";
+}
+
+function formatDate(date){
+  if(!date)return "";
+  const d=new Date(date);
+  if(Number.isNaN(d.getTime()))return "";
+  return d.toLocaleDateString("pt-PT",{day:"2-digit",month:"short",year:"numeric"});
+}
+
+function setTab(tab){
+  current=tab;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  const map={all:"tabAll",following:"tabFollowing",popular:"tabPopular"};
+  document.getElementById(map[tab])?.classList.add("active");
+  showHome(false);
+  render();
+}
+
+function showHome(updateTab=true){
+  document.getElementById("feed").style.display="";
+  document.getElementById("creatorBox").style.display="";
+  document.getElementById("explorePanel").classList.remove("show");
+  document.getElementById("chatPanel").classList.remove("show");
+  setBottomActive("bottomHome");
+  if(updateTab)render();
+}
+
+function showExplore(){
+  document.getElementById("feed").style.display="none";
+  document.getElementById("creatorBox").style.display="none";
+  document.getElementById("chatPanel").classList.remove("show");
+  document.getElementById("explorePanel").classList.add("show");
+  setBottomActive("bottomExplore");
+  renderExplore();
+}
+
+function showChat(){
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+  document.getElementById("feed").style.display="none";
+  document.getElementById("creatorBox").style.display="none";
+  document.getElementById("explorePanel").classList.remove("show");
+  document.getElementById("chatPanel").classList.add("show");
+  setBottomActive("bottomChat");
+  carregarChat();
+}
+
+function setBottomActive(id){
+  document.querySelectorAll(".vibe-bottom-nav button").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id)?.classList.add("active");
+}
+
+function render(){
+  const feed=document.getElementById("feed");
+  if(!feed)return;
+
+  let list=[...posts];
+
+  const query=(document.getElementById("search")?.value || "").trim().toLowerCase();
+  if(query){
+    list=list.filter(p=>
+      `${p.title||""} ${p.description||""} ${p.creatorName||""} ${p.creatorUsername||""}`
+      .toLowerCase().includes(query)
+    );
+  }
+
+  if(current==="popular"){
+    list.sort((a,b)=>(b.likeCount||0)-(a.likeCount||0));
+  }
+
+  if(current==="following"){
+    if(!currentUser){
+      feed.innerHTML=`<div class="empty">
+        <strong>Entra na tua conta</strong><br>
+        Segue criadores para veres aqui as suas publicações.
+        <br><br><button class="btn primary" onclick="openModal('login')">Entrar</button>
+      </div>`;
+      return;
+    }
+    list=list.filter(p=>p.following===true);
+  }
+
+  if(!list.length){
+    feed.innerHTML=`<div class="empty">Ainda não há publicações para mostrar.</div>`;
+    return;
+  }
+
+  feed.innerHTML=list.map(renderPost).join("");
+}
+
+function renderPost(post){
+  const avatar=post.avatar_url
+    ? `<img src="${esc(post.avatar_url)}" alt="">`
+    : initials(post.creatorName || "V");
+
+  let media="";
+  if(post.media_url){
+    const isVideo=/\.(mp4|webm|mov|m4v)(\?|$)/i.test(post.media_url);
+    media=isVideo
+      ? `<div class="post-media"><video controls preload="metadata" src="${esc(post.media_url)}"></video></div>`
+      : `<div class="post-media"><img src="${esc(post.media_url)}" alt="${esc(post.title||"Publicação")}"></div>`;
+  }
+
+  const access=post.access_type==="premium" || post.access_type==="exclusive";
+  const price=post.price ? ` · ${esc(post.price)}` : "";
+
+  return `
+    <article class="post-card">
+      <div class="post-head">
+        <div class="avatar">${avatar}</div>
+        <div class="creator-meta">
+          <div class="creator-name">${esc(post.creatorName || "Criador")}</div>
+          <div class="creator-handle">${esc(post.creatorUsername ? "@"+post.creatorUsername.replace(/^@/,"") : "")}${post.created_at ? " · "+esc(formatDate(post.created_at)) : ""}</div>
+        </div>
+      </div>
+
+      <h2 class="post-title">${esc(post.title || "Sem título")}</h2>
+      <p class="post-description">${esc(post.description || "")}</p>
+
+      ${access ? `
+        <div class="exclusive-box">
+          <div>
+            <strong>Conteúdo exclusivo</strong>
+            <span>Desbloqueia esta publicação${price}</span>
+          </div>
+          <button class="btn primary" onclick="postAction('premium')">Obter acesso</button>
+        </div>
+      ` : media}
+
+      <div class="actions">
+        <button class="${post.likedByMe ? "liked":""}" onclick="toggleLike(this,'${esc(post.id)}')">
+          ${post.likedByMe ? "♥ Gostei" : "♡ Gostar"}
+          <span class="like-count">${Number(post.likeCount||0)}</span>
+        </button>
+        <button onclick="openComments('${esc(post.id)}')">♡ Comentar <span>${Number(post.commentCount||0)}</span></button>
+        <button onclick="openCreator('${esc(post.creator_id||"")}')">Perfil</button>
+      </div>
+    </article>
+  `;
+}
+
+async function carregarPosts(){
+  if(!supabaseClient){
+    posts=[];
+    return;
+  }
+
+  try{
+    const {data,error}=await supabaseClient
+      .from("posts")
+      .select("*")
+      .order("created_at",{ascending:false});
+
+    if(error){
+      console.error("Erro posts:",error);
+      posts=[];
+      return;
+    }
+
+    posts=(data||[]).map(p=>({
+      ...p,
+      creatorName:p.creator_name || p.name || p.display_name || "Criador",
+      creatorUsername:p.creator_username || p.username || "",
+      avatar_url:p.avatar_url || p.creator_avatar_url || "",
+      likeCount:Number(p.like_count ?? p.likes ?? 0),
+      commentCount:Number(p.comment_count ?? p.comments_count ?? 0),
+      likedByMe:false
+    }));
+
+    if(currentUser) await carregarLikesDoUtilizador();
+  }catch(error){
+    console.error(error);
+    posts=[];
+  }
+}
+
+async function carregarLikesDoUtilizador(){
+  if(!supabaseClient || !currentUser || !posts.length)return;
+  try{
+    const {data,error}=await supabaseClient
+      .from("likes")
+      .select("post_id")
+      .eq("user_id",currentUser.id);
+
+    if(error){
+      console.warn("Likes não carregados:",error.message);
+      return;
+    }
+
+    const ids=new Set((data||[]).map(x=>String(x.post_id)));
+    posts=posts.map(p=>({...p,likedByMe:ids.has(String(p.id))}));
+  }catch(e){console.warn(e)}
+}
+
+async function carregarCriadores(){
+  if(!supabaseClient)return;
+  try{
+    const {data,error}=await supabaseClient
+      .from("profiles")
+      .select("*")
+      .limit(50);
+
+    if(error){
+      console.warn("Perfis não carregados:",error.message);
+      creators=[];
+      return;
+    }
+    creators=data||[];
+  }catch(e){
+    creators=[];
+  }
+}
+
+function renderExplore(){
+  const grid=document.getElementById("exploreGrid");
+  if(!grid)return;
+
+  if(!creators.length){
+    const unique=[];
+    const seen=new Set();
+    posts.forEach(p=>{
+      const key=p.creator_id || p.creatorUsername || p.creatorName;
+      if(!seen.has(key)){
+        seen.add(key);
+        unique.push({
+          id:p.creator_id,
+          display_name:p.creatorName,
+          username:p.creatorUsername,
+          avatar_url:p.avatar_url
+        });
+      }
+    });
+    creators=unique;
+  }
+
+  if(!creators.length){
+    grid.innerHTML=`<div class="empty">Ainda não existem criadores para explorar.</div>`;
+    return;
+  }
+
+  grid.innerHTML=creators.map(c=>{
+    const avatar=c.avatar_url
+      ? `<img src="${esc(c.avatar_url)}" alt="">`
+      : initials(c.display_name || c.username || "V");
+
+    return `
+      <div class="creator-card" onclick="openCreator('${esc(c.id||"")}')">
+        <div class="creator-card-top">
+          <div class="avatar">${avatar}</div>
+          <div>
+            <strong>${esc(c.display_name || "Criador")}</strong>
+            <div class="creator-handle">${c.username ? "@"+esc(c.username.replace(/^@/,"")) : ""}</div>
+          </div>
+        </div>
+        <p>${esc(c.bio || "Criador no VibeHub.")}</p>
+      </div>
+    `;
+  }).join("");
+}
+
+/* =========================
+   MODAIS
+========================= */
+
+function openModal(type,data=null){
+  const modal=document.getElementById("modal");
+  const card=document.getElementById("modalCard");
+  if(!modal||!card)return;
+
+  if(type==="login") card.innerHTML=loginHTML();
+  else if(type==="signup") card.innerHTML=signupHTML();
+  else if(type==="profile") card.innerHTML=profileHTML();
+  else if(type==="create") card.innerHTML=createPostHTML();
+  else if(type==="comments") card.innerHTML=commentsHTML(data);
+  else if(type==="notifications") card.innerHTML=notificationsHTML();
+  else if(type==="creator") card.innerHTML=creatorHTML(data);
+  else card.innerHTML=`<div class="modal-head"><h2>VibeHub</h2><button class="close" onclick="closeModal()">×</button></div>`;
+
+  modal.classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("modal")?.classList.remove("show");
+}
+
+function modalBackdrop(event){
+  if(event.target.id==="modal")closeModal();
+}
+
+function loginHTML(){
+  return `
+    <div class="modal-head">
+      <h2>Entrar</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <form onsubmit="login(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input id="loginEmail" type="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Palavra-passe</label>
+        <input id="loginPassword" type="password" required autocomplete="current-password">
+      </div>
+      <div id="loginMsg" class="msg"></div>
+      <div class="form-actions">
+        <button type="button" class="btn ghost" onclick="openModal('signup')">Criar conta</button>
+        <button type="submit" class="btn primary">Entrar</button>
+      </div>
+    </form>
+  `;
+}
+
+function signupHTML(){
+  return `
+    <div class="modal-head">
+      <h2>Criar conta</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <form onsubmit="signup(event)">
+      <div class="form-group">
+        <label>Nome</label>
+        <input id="signupName" type="text" maxlength="60" required>
+      </div>
+      <div class="form-group">
+        <label>Nome de utilizador</label>
+        <input id="signupUsername" type="text" maxlength="30" placeholder="ex.: jackson" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="signupEmail" type="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Palavra-passe</label>
+        <input id="signupPassword" type="password" minlength="6" required autocomplete="new-password">
+      </div>
+      <div id="signupMsg" class="msg"></div>
+      <div class="form-actions">
+        <button type="button" class="btn ghost" onclick="openModal('login')">Já tenho conta</button>
+        <button type="submit" class="btn primary">Criar conta</button>
+      </div>
+    </form>
+  `;
+}
+
+function profileHTML(){
+  if(!currentUser)return loginHTML();
+
+  const p=currentProfile||{};
+  const name=p.display_name || p.name || currentUser.user_metadata?.name || "Utilizador";
+  const username=p.username || currentUser.user_metadata?.username || "";
+  const avatar=p.avatar_url
+    ? `<img src="${esc(p.avatar_url)}" alt="">`
+    : initials(name);
+
+  const myPosts=posts.filter(x=>String(x.creator_id||"")===String(currentUser.id)).length;
+
+  return `
+    <div class="modal-head">
+      <h2>O meu perfil</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+
+    <div class="profile-info">
+      <div class="profile-big-avatar">${avatar}</div>
+      <h3>${esc(name)}</h3>
+      <p>${username ? "@"+esc(username.replace(/^@/,""))+" · " : ""}${esc(currentUser.email||"")}</p>
+    </div>
+
+    <div class="profile-stats">
+      <div class="stat"><strong>${myPosts}</strong><span>Publicações</span></div>
+      <div class="stat"><strong>0</strong><span>A seguir</span></div>
+      <div class="stat"><strong>0</strong><span>Seguidores</span></div>
+    </div>
+
+    <div class="profile-menu">
+      <button class="btn" onclick="openEditProfile()">Editar perfil</button>
+      <button class="btn" onclick="showMyPosts()">As minhas publicações</button>
+      <button class="btn logout-btn" onclick="logout()">Sair</button>
+    </div>
+  `;
+}
+
+function createPostHTML(){
+  return `
+    <div class="modal-head">
+      <h2>Criar publicação</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <form onsubmit="createPost(event)">
+      <div class="form-group">
+        <label>Título</label>
+        <input id="postTitle" maxlength="150" required>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="postDescription" maxlength="5000" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>URL da imagem/vídeo (opcional)</label>
+        <input id="postMedia" type="url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="postAccess">
+          <option value="free">Público</option>
+          <option value="premium">Exclusivo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Preço (opcional)</label>
+        <input id="postPrice" maxlength="40" placeholder="ex.: 4,99 €">
+      </div>
+      <div id="postMsg" class="msg"></div>
+      <div class="form-actions">
+        <button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn primary" type="submit">Publicar</button>
+      </div>
+    </form>
+  `;
+}
+
+function commentsHTML(postId){
+  const post=posts.find(x=>String(x.id)===String(postId));
+  return `
+    <div class="modal-head">
+      <h2>Comentários</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <div id="commentsList" class="chat-messages" style="height:250px;padding:0">
+      <div class="empty">A carregar...</div>
+    </div>
+    ${currentUser ? `
+      <form class="chat-form" style="padding:12px 0 0;border:0" onsubmit="addComment(event,'${esc(postId)}')">
+        <input id="commentInput" placeholder="Escreve um comentário..." maxlength="1000" required>
+        <button class="btn primary">Enviar</button>
+      </form>
+    ` : `<div class="msg">Entra na tua conta para comentar.</div>`}
+  `;
+}
+
+function notificationsHTML(){
+  return `
+    <div class="modal-head">
+      <h2>Notificações</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <div id="notificationsList" class="empty">A carregar...</div>
+  `;
+}
+
+function creatorHTML(profile){
+  if(!profile){
+    return `
+      <div class="modal-head"><h2>Criador</h2><button class="close" onclick="closeModal()">×</button></div>
+      <div class="empty">Perfil não encontrado.</div>
+    `;
+  }
+
+  const name=profile.display_name || profile.name || "Criador";
+  const username=profile.username || "";
+  const avatar=profile.avatar_url
+    ? `<img src="${esc(profile.avatar_url)}" alt="">`
+    : initials(name);
+
+  const count=posts.filter(p=>String(p.creator_id||"")===String(profile.id||"")).length;
+
+  return `
+    <div class="modal-head">
+      <h2>Perfil</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <div class="creator-profile-head">
+      <div class="avatar">${avatar}</div>
+      <div>
+        <h3>${esc(name)}</h3>
+        <p>${username ? "@"+esc(username.replace(/^@/,"")) : ""}</p>
+      </div>
+    </div>
+    <div class="creator-profile-description">${esc(profile.bio || "Criador no VibeHub.")}</div>
+    <div class="profile-stats">
+      <div class="stat"><strong>${count}</strong><span>Publicações</span></div>
+      <div class="stat"><strong>0</strong><span>Seguidores</span></div>
+      <div class="stat"><strong>0</strong><span>A seguir</span></div>
+    </div>
+    <button class="btn primary" style="width:100%" onclick="showCreatorPosts('${esc(profile.id||"")}')">Ver publicações</button>
+  `;
+}
+
+/* =========================
+   AUTH / SESSÃO
+========================= */
+
+async function signup(event){
+  event.preventDefault();
+
+  const msg=document.getElementById("signupMsg");
+  const name=document.getElementById("signupName").value.trim();
+  const username=document.getElementById("signupUsername").value.trim().replace(/^@/,"").toLowerCase();
+  const email=document.getElementById("signupEmail").value.trim();
+  const password=document.getElementById("signupPassword").value;
+
+  if(!supabaseClient){
+    msg.textContent="Configura primeiro a Publishable/Anon Key do Supabase.";
+    msg.className="msg error";
+    return;
+  }
+
+  msg.textContent="A criar conta...";
+  msg.className="msg";
+
+  try{
+    const result=await supabaseClient.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{name,username},
+        emailRedirectTo:window.location.origin + window.location.pathname
+      }
+    });
+
+    if(result.error){
+      msg.textContent=result.error.message;
+      msg.className="msg error";
+      return;
+    }
+
+    if(!result.data.session){
+      msg.textContent="Conta criada. Confirma o teu email e depois entra na conta.";
+      msg.className="msg success";
+      return;
+    }
+
+    await carregarPerfil(result.data.user);
+    await verificarSessao();
+    closeModal();
+    showToast("Conta criada com sucesso!");
+  }catch(error){
+    console.error(error);
+    msg.textContent=error.message || "Não foi possível criar a conta.";
+    msg.className="msg error";
+  }
+}
+
+async function login(event){
+  event.preventDefault();
+
+  const msg=document.getElementById("loginMsg");
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+
+  if(!supabaseClient){
+    msg.textContent="Configura primeiro a Publishable/Anon Key do Supabase.";
+    msg.className="msg error";
+    return;
+  }
+
+  msg.textContent="A entrar...";
+  msg.className="msg";
+
+  try{
+    const result=await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(result.error){
+      msg.textContent=result.error.message;
+      msg.className="msg error";
+      return;
+    }
+
+    currentUser=result.data.user;
+
+    if(!currentUser){
+      msg.textContent="Não foi possível obter o utilizador.";
+      msg.className="msg error";
+      return;
+    }
+
+    await carregarPerfil(currentUser);
+    mostrarUtilizador(currentUser);
+    closeModal();
+    await carregarPosts();
+    render();
+    showToast("Login efetuado!");
+  }catch(error){
+    console.error(error);
+    msg.textContent=error.message || "Erro ao iniciar sessão.";
+    msg.className="msg error";
+  }
+}
+
+async function verificarSessao(){
+  if(!supabaseClient)return;
+
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    currentUser=data.session?.user || null;
+
+    if(currentUser){
+      await carregarPerfil(currentUser);
+      mostrarUtilizador(currentUser);
+    }else{
+      esconderUtilizador();
+    }
+
+    supabaseClient.auth.onAuthStateChange(async (_event,session)=>{
+      currentUser=session?.user || null;
+
+      if(currentUser){
+        await carregarPerfil(currentUser);
+        mostrarUtilizador(currentUser);
+      }else{
+        currentProfile=null;
+        esconderUtilizador();
+      }
+    });
+  }catch(error){
+    console.error("Sessão:",error);
+  }
+}
+
+async function carregarPerfil(user){
+  if(!supabaseClient || !user)return null;
+
+  try{
+    const {data,error}=await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id",user.id)
+      .maybeSingle();
+
+    if(error){
+      console.warn("Perfil:",error.message);
+      currentProfile={
+        id:user.id,
+        display_name:user.user_metadata?.name || "Utilizador",
+        username:user.user_metadata?.username || ""
+      };
+      return currentProfile;
+    }
+
+    if(data){
+      currentProfile=data;
+      return data;
+    }
+
+    const newProfile={
+      id:user.id,
+      display_name:user.user_metadata?.name || "Utilizador",
+      username:user.user_metadata?.username || ""
+    };
+
+    const inserted=await supabaseClient
+      .from("profiles")
+      .insert(newProfile)
+      .select()
+      .single();
+
+    if(inserted.error){
+      console.warn("Não foi possível criar perfil:",inserted.error.message);
+      currentProfile=newProfile;
+      return newProfile;
+    }
+
+    currentProfile=inserted.data;
+    return inserted.data;
+  }catch(error){
+    console.warn(error);
+    currentProfile={
+      id:user.id,
+      display_name:user.user_metadata?.name || "Utilizador",
+      username:user.user_metadata?.username || ""
+    };
+    return currentProfile;
+  }
+}
+
+function mostrarUtilizador(user){
+  document.getElementById("authButtons").style.display="none";
+  document.getElementById("userArea").style.display="flex";
+
+  document.getElementById("chatBtn").style.display="flex";
+  document.getElementById("notificationsBtn").style.display="flex";
+  document.getElementById("bottomChat").style.display="block";
+
+  carregarNotificacoes();
+}
+
+function esconderUtilizador(){
+  document.getElementById("authButtons").style.display="flex";
+  document.getElementById("userArea").style.display="none";
+
+  document.getElementById("chatBtn").style.display="none";
+  document.getElementById("notificationsBtn").style.display="none";
+  document.getElementById("bottomChat").style.display="none";
+
+  const count=document.getElementById("notificationCount");
+  if(count){
+    count.style.display="none";
+  }
+}
+
+async function logout(){
+  try{
+    if(supabaseClient){
+      const {error}=await supabaseClient.auth.signOut();
+      if(error)console.warn(error.message);
+    }
+  }catch(error){
+    console.warn(error);
+  }
+
+  currentUser=null;
+  currentProfile=null;
+  esconderUtilizador();
+  closeModal();
+  showHome();
+  showToast("Sessão terminada.");
+}
+
+/* =========================
+   PERFIL
+========================= */
+
+function openEditProfile(){
+  if(!currentUser)return;
+
+  const p=currentProfile||{};
+  document.getElementById("modalCard").innerHTML=`
+    <div class="modal-head">
+      <h2>Editar perfil</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <form onsubmit="saveProfile(event)">
+      <div class="form-group">
+        <label>Nome</label>
+        <input id="editName" maxlength="60" value="${esc(p.display_name||p.name||"")}">
+      </div>
+      <div class="form-group">
+        <label>Nome de utilizador</label>
+        <input id="editUsername" maxlength="30" value="${esc(p.username||"")}">
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="editBio" maxlength="500">${esc(p.bio||"")}</textarea>
+      </div>
+      <div class="form-group">
+        <label>URL do avatar (opcional)</label>
+        <input id="editAvatar" type="url" value="${esc(p.avatar_url||"")}">
+      </div>
+      <div id="editMsg" class="msg"></div>
+      <div class="form-actions">
+        <button type="button" class="btn ghost" onclick="openModal('profile')">Cancelar</button>
+        <button class="btn primary">Guardar</button>
+      </div>
+    </form>
+  `;
+}
+
+async function saveProfile(event){
+  event.preventDefault();
+  const msg=document.getElementById("editMsg");
+
+  if(!supabaseClient||!currentUser){
+    msg.textContent="Precisas de estar ligado à conta.";
+    msg.className="msg error";
+    return;
+  }
+
+  const payload={
+    display_name:document.getElementById("editName").value.trim(),
+    username:document.getElementById("editUsername").value.trim().replace(/^@/,"").toLowerCase(),
+    bio:document.getElementById("editBio").value.trim(),
+    avatar_url:document.getElementById("editAvatar").value.trim()
+  };
+
+  msg.textContent="A guardar...";
+  msg.className="msg";
+
+  const {data,error}=await supabaseClient
+    .from("profiles")
+    .update(payload)
+    .eq("id",currentUser.id)
+    .select()
+    .single();
+
+  if(error){
+    msg.textContent=error.message;
+    msg.className="msg error";
+    return;
+  }
+
+  currentProfile=data;
+  await carregarPosts();
+  await carregarCriadores();
+  render();
+  closeModal();
+  showToast("Perfil atualizado.");
+}
+
+function showMyPosts(){
+  closeModal();
+  showHome();
+  const mine=posts.filter(p=>String(p.creator_id||"")===String(currentUser?.id||""));
+  const feed=document.getElementById("feed");
+
+  if(!mine.length){
+    feed.innerHTML=`<div class="empty">Ainda não tens publicações.</div>`;
+    return;
+  }
+  feed.innerHTML=mine.map(renderPost).join("");
+}
+
+function openCreatePost(){
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+  openModal("create");
+}
+
+/* =========================
+   PUBLICAÇÕES
+========================= */
+
+async function createPost(event){
+  event.preventDefault();
+
+  const msg=document.getElementById("postMsg");
+
+  if(!supabaseClient||!currentUser){
+    msg.textContent="Entra na tua conta primeiro.";
+    msg.className="msg error";
+    return;
+  }
+
+  const title=document.getElementById("postTitle").value.trim();
+  const description=document.getElementById("postDescription").value.trim();
+  const media_url=document.getElementById("postMedia").value.trim();
+  const access_type=document.getElementById("postAccess").value;
+  const price=document.getElementById("postPrice").value.trim();
+
+  msg.textContent="A publicar...";
+  msg.className="msg";
+
+  const payload={
+    creator_id:currentUser.id,
+    title,
+    description,
+    media_url:media_url || null,
+    access_type,
+    price:price || null
+  };
+
+  try{
+    const {error}=await supabaseClient.from("posts").insert(payload);
+
+    if(error){
+      msg.textContent=error.message;
+      msg.className="msg error";
+      return;
+    }
+
+    closeModal();
+    await carregarPosts();
+    render();
+    showToast("Publicação criada!");
+  }catch(error){
+    msg.textContent=error.message || "Erro ao publicar.";
+    msg.className="msg error";
+  }
+}
+
+async function toggleLike(button,postId){
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+  if(!supabaseClient)return;
+
+  const post=posts.find(p=>String(p.id)===String(postId));
+  if(!post)return;
+
+  button.disabled=true;
+
+  try{
+    if(post.likedByMe){
+      const {error}=await supabaseClient
+        .from("likes")
+        .delete()
+        .eq("post_id",postId)
+        .eq("user_id",currentUser.id);
+
+      if(error)throw error;
+
+      post.likedByMe=false;
+      post.likeCount=Math.max(0,Number(post.likeCount||0)-1);
+    }else{
+      const {error}=await supabaseClient
+        .from("likes")
+        .insert({post_id:postId,user_id:currentUser.id});
+
+      if(error)throw error;
+
+      post.likedByMe=true;
+      post.likeCount=Number(post.likeCount||0)+1;
+    }
+
+    render();
+  }catch(error){
+    console.error("Like:",error);
+    showToast("Não foi possível alterar o gosto.");
+  }finally{
+    button.disabled=false;
+  }
+}
+
+async function openComments(postId){
+  openModal("comments",postId);
+
+  const list=document.getElementById("commentsList");
+  if(!list)return;
+
+  if(!supabaseClient){
+    list.innerHTML=`<div class="empty">Supabase não configurado.</div>`;
+    return;
+  }
+
+  try{
+    const {data,error}=await supabaseClient
+      .from("comments")
+      .select("*")
+      .eq("post_id",postId)
+      .order("created_at",{ascending:true});
+
+    if(error){
+      list.innerHTML=`<div class="empty">${esc(error.message)}</div>`;
+      return;
+    }
+
+    if(!data?.length){
+      list.innerHTML=`<div class="empty">Ainda não existem comentários.</div>`;
+      return;
+    }
+
+    list.innerHTML=data.map(c=>`
+      <div class="message">
+        <strong>${esc(c.user_name||c.username||"Utilizador")}</strong><br>
+        ${esc(c.content||c.text||"")}
+      </div>
+    `).join("");
+  }catch(error){
+    list.innerHTML=`<div class="empty">Não foi possível carregar os comentários.</div>`;
+  }
+}
+
+async function addComment(event,postId){
+  event.preventDefault();
+  if(!currentUser||!supabaseClient)return;
+
+  const input=document.getElementById("commentInput");
+  const content=input.value.trim();
+  if(!content)return;
+
+  try{
+    const payload={
+      post_id:postId,
+      user_id:currentUser.id,
+      content
+    };
+
+    const {error}=await supabaseClient.from("comments").insert(payload);
+
+    if(error){
+      showToast(error.message);
+      return;
+    }
+
+    input.value="";
+    await openComments(postId);
+  }catch(error){
+    showToast("Não foi possível comentar.");
+  }
+}
+
+function postAction(type){
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+  if(type==="premium"){
+    showToast("O acesso a conteúdo exclusivo será ligado ao sistema de pagamento.");
+  }
+}
+
+/* =========================
+   NOTIFICAÇÕES
+========================= */
+
+async function carregarNotificacoes(){
+  const dot=document.getElementById("notificationCount");
+  if(!dot||!currentUser||!supabaseClient)return;
+
+  try{
+    const {data,error}=await supabaseClient
+      .from("notifications")
+      .select("id,is_read")
+      .eq("user_id",currentUser.id)
+      .eq("is_read",false);
+
+    if(error){
+      dot.style.display="none";
+      return;
+    }
+
+    const unread=(data||[]).length;
+    dot.style.display=unread>0 ? "block" : "none";
+  }catch(error){
+    dot.style.display="none";
+  }
+}
+
+async function openNotifications(){
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+
+  openModal("notifications");
+
+  const list=document.getElementById("notificationsList");
+  if(!list)return;
+
+  if(!supabaseClient){
+    list.textContent="Supabase não configurado.";
+    return;
+  }
+
+  try{
+    const {data,error}=await supabaseClient
+      .from("notifications")
+      .select("*")
+      .eq("user_id",currentUser.id)
+      .order("created_at",{ascending:false})
+      .limit(30);
+
+    if(error){
+      list.innerHTML=`<div class="empty">${esc(error.message)}</div>`;
+      return;
+    }
+
+    if(!data?.length){
+      list.innerHTML=`<div class="empty">Não tens notificações.</div>`;
+      return;
+    }
+
+    list.className="";
+    list.innerHTML=data.map(n=>`
+      <div class="creator-card" style="margin-bottom:8px;cursor:default">
+        <strong>${esc(n.title||"Notificação")}</strong>
+        <p>${esc(n.message||n.content||"")}</p>
+        <small style="color:var(--muted)">${esc(formatDate(n.created_at))}</small>
+      </div>
+    `).join("");
+
+    const unread=data.filter(n=>!n.is_read).map(n=>n.id);
+    if(unread.length){
+      await supabaseClient
+        .from("notifications")
+        .update({is_read:true})
+        .in("id",unread);
+    }
+
+    const dot=document.getElementById("notificationCount");
+    if(dot)dot.style.display="none";
+  }catch(error){
+    list.innerHTML=`<div class="empty">Não foi possível carregar as notificações.</div>`;
+  }
+}
+
+/* =========================
+   CRIADORES
+========================= */
+
+async function openCreator(id){
+  if(!id){
+    showToast("Perfil não disponível.");
+    return;
+  }
+
+  let profile=creators.find(c=>String(c.id)===String(id));
+
+  if(!profile && supabaseClient){
+    try{
+      const {data}=await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id",id)
+        .maybeSingle();
+      profile=data;
+    }catch(e){}
+  }
+
+  openModal("creator",profile);
+}
+
+function showCreatorPosts(id){
+  closeModal();
+  showHome(false);
+
+  const mine=posts.filter(p=>String(p.creator_id||"")===String(id));
+  const feed=document.getElementById("feed");
+
+  feed.innerHTML=mine.length
+    ? mine.map(renderPost).join("")
+    : `<div class="empty">Este criador ainda não tem publicações.</div>`;
+}
+
+/* =========================
+   CHAT
+========================= */
+
+async function carregarChat(){
+  const box=document.getElementById("chatMessages");
+  if(!box||!currentUser||!supabaseClient)return;
+
+  try{
+    const {data,error}=await supabaseClient
+      .from("messages")
+      .select("*")
+      .eq("receiver_id",currentUser.id)
+      .order("created_at",{ascending:true})
+      .limit(100);
+
+    if(error){
+      box.innerHTML=`<div class="empty">O chat está disponível quando a tabela de mensagens estiver configurada.</div>`;
+      return;
+    }
+
+    if(!data?.length){
+      box.innerHTML=`<div class="empty">Ainda não tens mensagens.</div>`;
+      return;
+    }
+
+    box.innerHTML=data.map(m=>`
+      <div class="message">
+        ${esc(m.content||m.message||"")}
+      </div>
+    `).join("");
+    box.scrollTop=box.scrollHeight;
+  }catch(error){
+    box.innerHTML=`<div class="empty">Ainda não tens mensagens.</div>`;
+  }
+}
+
+async function sendChat(event){
+  event.preventDefault();
+
+  if(!currentUser){
+    openModal("login");
+    return;
+  }
+
+  const input=document.getElementById("chatInput");
+  const content=input.value.trim();
+  if(!content)return;
+
+  /*
+    O chat necessita de um receiver_id para enviar uma mensagem
+    para outra pessoa. Esta versão mantém a interface funcional
+    sem inventar um destinatário.
+  */
+  showToast("Seleciona uma conversa para enviar mensagens.");
+  input.value="";
+}
+
+/* =========================
+   UTILITÁRIOS
+========================= */
+
+window.addEventListener("error",(event)=>{
+  console.error("VibeHub JS:",event.error || event.message);
+});
+
+window.addEventListener("unhandledrejection",(event)=>{
+  console.error("VibeHub Promise:",event.reason);
+});
+</script>
+
+</body>
+</html>

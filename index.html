@@ -236,8 +236,7 @@ main{
 .post-media video{
   display:block;
   width:100%;
-  max-height:620px;
-  min-height:220px;
+  height:280px;
   object-fit:cover;
 }
 
@@ -330,31 +329,30 @@ main{
 
 /* CONTEÚDO EXCLUSIVO */
 .exclusive-box{
-  margin-top:17px;
-  padding:18px;
-  border:1px solid rgba(124,92,255,.45);
+  margin-top:14px;
+  padding:13px 15px;
+  border:1px solid rgba(124,92,255,.35);
   background:#211e36;
-  border-radius:18px;
-  display:block;
+  border-radius:15px;
 }
 
 .exclusive-box strong{
   display:block;
-  margin-bottom:6px;
-  font-size:18px;
+  margin-bottom:4px;
+  font-size:16px;
 }
 
 .exclusive-box span{
-  display:block;
-  font-size:16px;
+  font-size:14px;
   color:#a9a5b8;
-  line-height:1.4;
 }
 
 .exclusive-box .btn{
-  width:100%;
-  margin-top:14px;
-}
+  width:auto;
+  margin-top:10px;
+  padding:9px 16px;
+  font-size:14px;
+  }
 
 /* BOTÕES */
 .actions{
@@ -676,7 +674,7 @@ main{
 }
 
 .post-content{
-  padding:0 16px 15px;
+  padding:0 15px 14px;
 }
 
 .post-head{
@@ -684,7 +682,9 @@ main{
 }
 
 .post-title{
-  font-size:23px;
+  margin:4px 0 6px;
+  font-size:22px;
+  line-height:1.15;
 }
 
 .post-description{
@@ -1026,8 +1026,11 @@ function renderPost(post){
     media=isVideo
       ? `
         <div class="post-media">
-          <video controls preload="metadata"
-            src="${esc(post.media_url)}"></video>
+          <video
+            controls
+            preload="metadata"
+            src="${esc(post.media_url)}">
+          </video>
 
           ${access ? `
             <div class="premium-badge">
@@ -1040,7 +1043,7 @@ function renderPost(post){
         <div class="post-media">
           <img
             src="${esc(post.media_url)}"
-            alt="${esc(post.title||"Publicação")}"
+            alt="${esc(post.title || "Publicação")}"
           >
 
           ${access ? `
@@ -1060,28 +1063,22 @@ function renderPost(post){
       <div class="post-content">
 
         <div class="post-head">
+
           <div class="avatar">
             ${avatar}
           </div>
 
           <div class="creator-meta">
+
             <div class="creator-name">
               ${esc(post.creatorName || "Criador")}
             </div>
 
             <div class="creator-handle">
-              ${
-                post.creatorUsername
-                  ? "@"+post.creatorUsername.replace(/^@/,"")
-                  : ""
-              }
-              ${
-                post.created_at
-                  ? " · "+esc(formatDate(post.created_at))
-                  : ""
-              }
-            </div>
+  ${esc(post.creatorUsername ? "@"+post.creatorUsername.replace(/^@/,"") : "")}
+</div>
           </div>
+
         </div>
 
         <h2 class="post-title">
@@ -1105,8 +1102,7 @@ function renderPost(post){
 
               <button
                 class="btn primary"
-                onclick="postAction('premium')"
-              >
+                onclick="postAction('premium')">
                 Obter acesso
               </button>
 
@@ -1119,28 +1115,22 @@ function renderPost(post){
 
           <button
             class="${post.likedByMe ? "liked" : ""}"
-            onclick="toggleLike(this,'${esc(post.id)}')"
-          >
+            onclick="toggleLike(this,'${esc(post.id)}')">
             ${post.likedByMe ? "♥ Gostei" : "♡ Gostar"}
             <span class="like-count">
-              ${Number(post.likeCount||0)}
+              ${Number(post.likeCount || 0)}
             </span>
           </button>
 
           <button
-            onclick="openComments('${esc(post.id)}')"
-          >
-            Comentar
+            onclick="openComments('${esc(post.id)}')">
+            ♡ Comentar
             <span>
-              ${Number(post.commentCount||0)}
+              ${Number(post.commentCount || 0)}
             </span>
           </button>
 
-          <button
-            onclick="openCreator('${esc(post.creator_id||"")}')"
-          >
-            Perfil
-          </button>
+          <button onclick="sharePost('${esc(post.id)}')">↗ Partilhar</button>
 
         </div>
 
@@ -1149,7 +1139,7 @@ function renderPost(post){
     </article>
   `;
 }
-
+  
 async function carregarPosts(){
   if(!supabaseClient){
     posts=[];

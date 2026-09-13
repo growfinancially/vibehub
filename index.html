@@ -217,21 +217,47 @@ main{
 .post-card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:17px;
-  padding:22px;
+  border-radius:22px;
   overflow:hidden;
+  padding:0;
 }
 
+/* IMAGEM DA PUBLICAÇÃO */
+.post-media{
+  position:relative;
+  margin:0;
+  border:0;
+  border-radius:0;
+  overflow:hidden;
+  background:#0d0f13;
+}
+
+.post-media img,
+.post-media video{
+  display:block;
+  width:100%;
+  max-height:620px;
+  min-height:220px;
+  object-fit:cover;
+}
+
+/* ÁREA DE INFORMAÇÃO */
+.post-content{
+  padding:0 18px 17px;
+}
+
+/* CRIADOR */
 .post-head{
   display:flex;
   align-items:center;
   gap:12px;
-  margin-bottom:18px;
+  margin:0;
+  padding:14px 0 13px;
 }
 
 .avatar{
-  width:42px;
-  height:42px;
+  width:48px;
+  height:48px;
   border-radius:50%;
   background:linear-gradient(135deg,#292e36,#20242b);
   border:1px solid var(--border);
@@ -242,87 +268,128 @@ main{
   flex:none;
   font-weight:900;
 }
+
 .avatar img{
   width:100%;
   height:100%;
   object-fit:cover;
 }
 
-.creator-meta{min-width:0}
+.creator-meta{
+  min-width:0;
+}
+
 .creator-name{
-  font-weight:800;
+  font-weight:850;
+  font-size:17px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
+
 .creator-handle{
   color:var(--muted);
-  font-size:13px;
-  margin-top:2px;
+  font-size:14px;
+  margin-top:3px;
 }
 
+/* TÍTULO */
 .post-title{
-  margin:0 0 10px;
-  font-size:20px;
-  letter-spacing:-.4px;
+  margin:4px 0 8px;
+  font-size:24px;
+  line-height:1.15;
+  letter-spacing:-.6px;
 }
+
+/* DESCRIÇÃO */
 .post-description{
   margin:0;
   color:#b6bbc4;
-  line-height:1.6;
+  font-size:17px;
+  line-height:1.5;
   white-space:pre-wrap;
 }
 
-.post-media{
-  margin-top:17px;
-  border-radius:13px;
-  overflow:hidden;
-  background:#0d0f13;
-  border:1px solid var(--border);
-}
-.post-media img,.post-media video{
-  display:block;
-  width:100%;
-  max-height:520px;
-  object-fit:cover;
-}
-
-.exclusive-box{
-  margin-top:17px;
-  padding:18px;
-  border:1px solid var(--border);
-  background:#111419;
-  border-radius:13px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-}
-.exclusive-box strong{display:block;margin-bottom:4px}
-.exclusive-box span{font-size:13px;color:var(--muted)}
-
-.actions{
+/* ETIQUETA PREMIUM */
+.premium-badge{
+  position:absolute;
+  top:16px;
+  right:16px;
+  z-index:2;
   display:flex;
   align-items:center;
   gap:7px;
+  padding:10px 14px;
+  border-radius:18px;
+  background:rgba(20,20,23,.90);
+  color:#fff;
+  font-size:16px;
+  font-weight:850;
+  backdrop-filter:blur(8px);
+}
+
+/* CONTEÚDO EXCLUSIVO */
+.exclusive-box{
+  margin-top:17px;
+  padding:18px;
+  border:1px solid rgba(124,92,255,.45);
+  background:#211e36;
+  border-radius:18px;
+  display:block;
+}
+
+.exclusive-box strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:18px;
+}
+
+.exclusive-box span{
+  display:block;
+  font-size:16px;
+  color:#a9a5b8;
+  line-height:1.4;
+}
+
+.exclusive-box .btn{
+  width:100%;
+  margin-top:14px;
+}
+
+/* BOTÕES */
+.actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
   margin-top:17px;
   flex-wrap:wrap;
 }
+
 .actions button{
+  flex:1;
+  min-width:0;
   border:1px solid transparent;
-  background:transparent;
-  color:var(--muted);
-  border-radius:9px;
-  padding:8px 10px;
-  font-weight:700;
+  background:#191c22;
+  color:#d4d7dd;
+  border-radius:13px;
+  padding:11px 12px;
+  font-weight:750;
+  font-size:15px;
 }
+
 .actions button:hover{
   color:#fff;
-  background:var(--card2);
+  background:#20242b;
   border-color:var(--border);
 }
-.actions button.liked{color:#b7a8ff}
-.like-count{margin-left:3px}
+
+.actions button.liked{
+  color:#b7a8ff;
+}
+
+.like-count{
+  margin-left:3px;
+}
 
 .empty{
   padding:45px 20px;
@@ -604,8 +671,41 @@ main{
   main{padding:20px 12px 84px}
   .hero{padding:22px 0 18px}
   .hero h1{font-size:31px;letter-spacing:-1.4px}
-  .post-card{padding:19px 16px;border-radius:15px}
-  .post-head{margin-bottom:16px}
+  .post-card{
+  border-radius:20px;
+}
+
+.post-content{
+  padding:0 16px 15px;
+}
+
+.post-head{
+  padding:13px 0 12px;
+}
+
+.post-title{
+  font-size:23px;
+}
+
+.post-description{
+  font-size:16px;
+}
+
+.premium-badge{
+  top:14px;
+  right:14px;
+  padding:9px 12px;
+  font-size:14px;
+}
+
+.actions{
+  gap:7px;
+}
+
+.actions button{
+  padding:10px 8px;
+  font-size:14px;
+}
   .exclusive-box{
     align-items:flex-start;
     flex-direction:column;
@@ -912,48 +1012,140 @@ function renderPost(post){
     ? `<img src="${esc(post.avatar_url)}" alt="">`
     : initials(post.creatorName || "V");
 
+  const access =
+    post.access_type==="premium" ||
+    post.access_type==="exclusive";
+
+  const price=post.price ? ` · ${esc(post.price)}` : "";
+
   let media="";
+
   if(post.media_url){
     const isVideo=/\.(mp4|webm|mov|m4v)(\?|$)/i.test(post.media_url);
-    media=isVideo
-      ? `<div class="post-media"><video controls preload="metadata" src="${esc(post.media_url)}"></video></div>`
-      : `<div class="post-media"><img src="${esc(post.media_url)}" alt="${esc(post.title||"Publicação")}"></div>`;
-  }
 
-  const access=post.access_type==="premium" || post.access_type==="exclusive";
-  const price=post.price ? ` · ${esc(post.price)}` : "";
+    media=isVideo
+      ? `
+        <div class="post-media">
+          <video controls preload="metadata"
+            src="${esc(post.media_url)}"></video>
+
+          ${access ? `
+            <div class="premium-badge">
+              🔒 PREMIUM
+            </div>
+          ` : ""}
+        </div>
+      `
+      : `
+        <div class="post-media">
+          <img
+            src="${esc(post.media_url)}"
+            alt="${esc(post.title||"Publicação")}"
+          >
+
+          ${access ? `
+            <div class="premium-badge">
+              🔒 PREMIUM
+            </div>
+          ` : ""}
+        </div>
+      `;
+  }
 
   return `
     <article class="post-card">
-      <div class="post-head">
-        <div class="avatar">${avatar}</div>
-        <div class="creator-meta">
-          <div class="creator-name">${esc(post.creatorName || "Criador")}</div>
-          <div class="creator-handle">${esc(post.creatorUsername ? "@"+post.creatorUsername.replace(/^@/,"") : "")}${post.created_at ? " · "+esc(formatDate(post.created_at)) : ""}</div>
-        </div>
-      </div>
 
-      <h2 class="post-title">${esc(post.title || "Sem título")}</h2>
-      <p class="post-description">${esc(post.description || "")}</p>
+      ${media}
 
-      ${access ? `
-        <div class="exclusive-box">
-          <div>
-            <strong>Conteúdo exclusivo</strong>
-            <span>Desbloqueia esta publicação${price}</span>
+      <div class="post-content">
+
+        <div class="post-head">
+          <div class="avatar">
+            ${avatar}
           </div>
-          <button class="btn primary" onclick="postAction('premium')">Obter acesso</button>
-        </div>
-      ` : media}
 
-      <div class="actions">
-        <button class="${post.likedByMe ? "liked":""}" onclick="toggleLike(this,'${esc(post.id)}')">
-          ${post.likedByMe ? "♥ Gostei" : "♡ Gostar"}
-          <span class="like-count">${Number(post.likeCount||0)}</span>
-        </button>
-        <button onclick="openComments('${esc(post.id)}')">♡ Comentar <span>${Number(post.commentCount||0)}</span></button>
-        <button onclick="openCreator('${esc(post.creator_id||"")}')">Perfil</button>
+          <div class="creator-meta">
+            <div class="creator-name">
+              ${esc(post.creatorName || "Criador")}
+            </div>
+
+            <div class="creator-handle">
+              ${
+                post.creatorUsername
+                  ? "@"+post.creatorUsername.replace(/^@/,"")
+                  : ""
+              }
+              ${
+                post.created_at
+                  ? " · "+esc(formatDate(post.created_at))
+                  : ""
+              }
+            </div>
+          </div>
+        </div>
+
+        <h2 class="post-title">
+          ${esc(post.title || "Sem título")}
+        </h2>
+
+        <p class="post-description">
+          ${esc(post.description || "")}
+        </p>
+
+        ${
+          access
+          ? `
+            <div class="exclusive-box">
+
+              <strong>Conteúdo exclusivo</strong>
+
+              <span>
+                Subscreve para desbloquear${price}.
+              </span>
+
+              <button
+                class="btn primary"
+                onclick="postAction('premium')"
+              >
+                Obter acesso
+              </button>
+
+            </div>
+          `
+          : ""
+        }
+
+        <div class="actions">
+
+          <button
+            class="${post.likedByMe ? "liked" : ""}"
+            onclick="toggleLike(this,'${esc(post.id)}')"
+          >
+            ${post.likedByMe ? "♥ Gostei" : "♡ Gostar"}
+            <span class="like-count">
+              ${Number(post.likeCount||0)}
+            </span>
+          </button>
+
+          <button
+            onclick="openComments('${esc(post.id)}')"
+          >
+            Comentar
+            <span>
+              ${Number(post.commentCount||0)}
+            </span>
+          </button>
+
+          <button
+            onclick="openCreator('${esc(post.creator_id||"")}')"
+          >
+            Perfil
+          </button>
+
+        </div>
+
       </div>
+
     </article>
   `;
 }
